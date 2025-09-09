@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginIndex from '@/views/login/LoginIndex.vue'
 import LayoutIndex from '@/views/layout/LayoutIndex.vue'
+import FriendsIndex from '@/views/friends/FriendsIndex.vue'
 import { useUserStore } from '@/stores'
 
 const router = createRouter({
@@ -13,11 +14,49 @@ const router = createRouter({
     {
       path: '/',
       component: LayoutIndex,
-      childrem: [
+      redirect: '/friends',
+      children: [
         {
-          path: ''
+          path: '/friends',
+          component: FriendsIndex
+        },
+        {
+          path: '/task',
+          component: () => import('@/views/task/TaskIndex.vue')
+        },
+        {
+          path: '/message',
+          component: () => import('@/views/message/MessageIndex.vue')
+        },
+        {
+          path: '/me',
+          component: () => import('@/views/me/MeIndex.vue')
         }
       ]
+    },
+    {
+      path: '/search',
+      component: () => import('@/views/search/SearchIndex.vue')
+    },
+    {
+      path: '/searchcontent',
+      component: () => import('@/views/search/SearchContent.vue')
+    },
+    {
+      path: '/searchuser',
+      component: () => import('@/views/search/SearchUser.vue')
+    },
+    {
+      path: '/mecontent',
+      component: () => import('@/views/me/MeContent.vue')
+    },
+    {
+      path: '/black',
+      component: () => import('@/views/me/BlackIndex.vue')
+    },
+    {
+      path: '/collection',
+      component: () => import('@/views/me/CollectionIndex.vue')
     }
   ],
 })

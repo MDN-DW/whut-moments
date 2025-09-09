@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue'
-import { showToast, showSuccessToast } from 'vant';
 import { getCode, login } from '@/api/user';
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores'
@@ -39,8 +38,7 @@ const valid = () => {
 }
 
 const getMsgCode = async () => {
-    const { data: data } = await getCode()
-    msgCode.value = data.code
+    await getCode()
 }
 
 const route = useRoute()
@@ -52,7 +50,6 @@ const Login = async () => {
         return
     }
     const { data: data } = await login({ mobile: mobile.value, code: msgCode.value })
-    userStore.setUser(data)
     userStore.setToken(data.access_token)
     showSuccessToast('登录成功')
     const url = route.query.backUrl || '/'

@@ -30,7 +30,8 @@ export default defineConfig({
     postcss: {
       plugins: [
         postcsspxtoviewport({
-          viewportWidth: 375
+          viewportWidth: 375,
+          fontViewportUnit: 'vw'
         }),
       ]
     }
