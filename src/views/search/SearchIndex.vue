@@ -16,7 +16,7 @@ const onSearch = () => {
         return
     }
     router.push({
-        path: '/searchcontent',
+        path: '/search/content',
         query: {
             key: key.value
         }
@@ -58,11 +58,11 @@ const onRefresh = () => {
             </template>
         </van-search>
         <div class="middle">
-            <div class="search-user" @click="router.push('/searchuser')">
+            <div class="search-user" @click="router.push('/search/user')">
                 <van-icon name="friends" />
                 <p>找人</p>
             </div>
-            <div class="search-task" @click="router.push('/searchtask')">
+            <div class="search-task" @click="router.push('/search/task')">
                 <van-icon name="notes" />
                 <p>找任务</p>
             </div>

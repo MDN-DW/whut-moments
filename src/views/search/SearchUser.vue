@@ -4,6 +4,13 @@ import { ref } from 'vue'
 
 const router = useRouter()
 
+const key = ref('')
+const onSearch = () => {
+    if (key.value.trim() === '') {
+        showToast('搜索内容不能为空')
+        return
+    }
+}
 </script>
 
 <template>

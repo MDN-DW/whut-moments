@@ -26,7 +26,7 @@ const logout = async () => {
 </script>
 
 <template>
-    <div class="me">
+    <div class="me" v-if="userStore.token">
         <div class="header">
             <van-nav-bar title="我的" />
         </div>
@@ -76,6 +76,14 @@ const logout = async () => {
             </div>
             <van-button type="danger" plain replace class="logout-button" @click="logout">退出登录</van-button>
         </div>
+    </div>
+    <div v-else class="un-login">
+        <strong>请先登录</strong>
+        <p>登录后即可使用全部功能</p>
+        <van-button type="primary" @click="router.push('/login')" class="go-login-button">
+            <van-icon name="guide-o" />
+            去登录
+        </van-button>
     </div>
 </template>
 
@@ -137,6 +145,40 @@ const logout = async () => {
 
         .logout-button {
             margin-top: 90px;
+        }
+    }
+}
+
+.un-login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    p {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #999;
+    }
+
+    strong {
+        font-size: 24px;
+    }
+
+    .go-login-button {
+        width: 200px;
+        height: 40px;
+        margin-top: 20px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .van-icon {
+            font-size: 16px;
         }
     }
 }
