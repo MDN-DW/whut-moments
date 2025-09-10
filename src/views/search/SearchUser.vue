@@ -14,8 +14,8 @@ const onSearch = () => {
 </script>
 
 <template>
-    <van-nav-bar title="找人" left-arrow @click-left="router.back()" />
-    <van-search v-model="key" placeholder="请输入搜索关键词" show-action>
+    <van-nav-bar title="添加朋友" left-arrow @click-left="router.back()" />
+    <van-search v-model="key" placeholder="请输入用户ID" show-action>
         <template #action>
             <div @click="onSearch">搜索</div>
         </template>

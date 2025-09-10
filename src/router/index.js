@@ -105,12 +105,31 @@ const router = createRouter({
     {
       // 好友聊天页
       path: '/friends/chat'
+    },
+    {
+      // 好友列表页
+      path: '/partner/list'
+    },
+    {
+      // 我的帖子页
+      path: '/posts/list',
+      component: () => import('@/views/me/PostList.vue')
+    },
+    {
+      // 我的喜欢页
+      path: '/likes',
+      component: () => import('@/views/me/LikesList.vue')
+    },
+    {
+      // 搜索好友页
+      path: '/search/partner',
+      component: () => import('@/views/search/SearchPartner.vue')
     }
   ],
 })
 
 // 需要登录才可以访问的页面
-const authPages = ['/task/rate', '/friends/content', '/friends/list', '/friends/edit', '/go/user', '/friends/apply', '/friends/chat']
+/* const authPages = ['/task/rate', '/friends/content', '/friends/list', '/friends/edit', '/go/user', '/friends/apply', '/friends/chat', '/black']
 
 router.beforeEach((to) => {
   const userStore = useUserStore()
@@ -121,6 +140,6 @@ router.beforeEach((to) => {
     return true
   }
   return '/login'
-})
+}) */
 
 export default router

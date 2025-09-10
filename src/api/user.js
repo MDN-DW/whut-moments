@@ -33,3 +33,18 @@ export const updateUerInfo = ({ nickname, avatar_url, birthday, gender, campus_i
         privacy_fans
     })
 }
+
+// 获取黑名单列表
+export const getBlackList = ({ page, size }) => {
+    return request.get('/api/users/blacklist', {
+        params: {
+            page,
+            size
+        }
+    })
+}
+
+// 去除黑名单
+export const delBlack = (target_id) => {
+    return request.delete(`/api/users/blacklist/${target_id}`)
+}
