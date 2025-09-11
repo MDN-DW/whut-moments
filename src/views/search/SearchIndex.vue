@@ -41,6 +41,7 @@ const onLoad = async () => {
 
 const onRefresh = () => {
     // 清空列表数据
+    list.value = []
     finished.value = false
     // 重新加载数据
     // 将 loading 设置为 true，表示处于加载状态
@@ -51,22 +52,12 @@ const onRefresh = () => {
 
 <template>
     <div class="container">
-        <van-nav-bar title="帖子搜索" left-arrow @click-left="router.back()" />
-        <van-search v-model="key" placeholder="请输入搜索关键词" show-action>
+        <van-nav-bar title="帖子搜索" left-arrow @click-left="router.back()" fixed />
+        <van-search v-model="key" placeholder="请输入搜索关键词" show-action class="search-bar">
             <template #action>
                 <div @click="onSearch">搜索</div>
             </template>
         </van-search>
-        <div class="middle">
-            <div class="search-user" @click="router.push('/search/user')">
-                <van-icon name="friends" />
-                <p>找人</p>
-            </div>
-            <div class="search-task" @click="router.push('/search/task')">
-                <van-icon name="notes" />
-                <p>找任务</p>
-            </div>
-        </div>
         <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
             <strong><van-icon name="fire" color="#ee0a24" />24小时火文</strong>
             <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
@@ -77,26 +68,18 @@ const onRefresh = () => {
 </template>
 
 <style lang="less" scoped>
-.middle {
-    display: flex;
-    justify-content: space-around;
-}
-
-.search-user,
-.search-task {
-    p {
-        font-size: 14px;
-        margin-top: 0;
-    }
-
-    .van-icon {
-        font-size: 30px;
-    }
-}
-
 .van-pull-refresh {
     strong {
         font-size: 18px;
     }
+}
+
+:deep(.van-list) {
+    height: 100vh;
+}
+
+.search-bar {
+    margin-top: 45px;
+    margin-bottom: 10px;
 }
 </style>

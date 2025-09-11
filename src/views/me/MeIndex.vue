@@ -99,13 +99,12 @@ const logout = async () => {
 <style lang="less" scoped>
 .me {
     position: relative;
+    height: 100vh;
 
     :deep(.van-image) {
         width: 50px;
         height: 50px;
     }
-
-    height: 100vh;
 
     .container {
         display: flex;

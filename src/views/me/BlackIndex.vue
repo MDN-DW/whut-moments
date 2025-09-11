@@ -13,6 +13,8 @@ const total = ref(0)
 // 正式
 // const res = await getBlackList({ page: page.value, size: size.value })
 // blackList.value = res.data.data.list
+// total.value = res.data.data.pagination.total
+
 // 测试
 blackList.value = [
     {
@@ -39,7 +41,6 @@ blackList.value = [
 const loading = ref(false)
 const finished = ref(false)
 const refreshing = ref(false)
-
 
 const onLoad = async () => {
     if (refreshing.value) {
@@ -147,8 +148,6 @@ const onLoad = async () => {
     // 测试
     total.value = mockData.pagination.total
 
-    // 正式
-    // total.value = data.pagination.total
     if (blackList.value.length >= total.value) {
         finished.value = true
     }
