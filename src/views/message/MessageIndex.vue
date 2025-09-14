@@ -2,8 +2,12 @@
 import { useRouter } from 'vue-router';
 import { ref } from 'vue'
 import defaultAvatar from '@/assets/image/default.png'
-import { getFriendsList, getNoticeList, readNotice } from '@/api/friends'
-import { get } from 'vant/lib/utils';
+import { getFriendsList, readNotice, getNoticeCount } from '@/api/friends'
+import { useNoticeStore, useSocketStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+
+// 正式
+// const { displayList, chatMap } = storeToRefs(useSocketStore())
 
 const isOpen = ref(false)
 
@@ -20,68 +24,6 @@ getList()
 
 const loading = ref(false)
 const finished = ref(false)
-const refreshing = ref(false)
-const page = ref(1)
-const size = ref(10)
-const total = ref(0)
-
-// 正式
-/* // 好友消息列表
-const chatList = ref([])
-// 互动列表
-const interactionList = ref([])
-// 系统消息列表
-const systemList = ref([])
-
-// 判断是否已经有了这个好友的消息
-const isExistChat = (frind_id) => {
-    return chatList.value.some(item => item.from_user.id === frind_id)
-}
-
-// 查找具有指定 id 的好友消息索引
-const findChat = (id) => {
-    return chatList.value.findIndex(item => item.from_user.id === id)
-}
-
-const getNotice = async () => {
-    const { data: { data } } = await getNoticeList({ page: page.value, size: size.value })
-    total.value = data.pagination.total
-    for (let i = 0; i < data.list.length; ++i) {
-        if (data.list[i].type === 'CHAT') {
-            if (isExistChat(data.list[i].from_user.id)) {
-                const ind = findChat(data.list[i].from_user.id)
-                chatList.value[ind].content = data.list[i].content
-            } else {
-                chatList.value.push(data.list[i])
-            }
-        } else if (data.list[i].type === 'INTERACTION') {
-            interactionList.value.push(data.list[i])
-        } else if (data.list[i].type === 'SYSTEM') {
-            systemList.value.push(data.list[i])
-        }
-    }
-}
-getNotice() */
-
-// 正式
-/* const onLoad = async () => {
-    if (refreshing.value) {
-        chatList.value = []
-        interactionList.value = []
-        systemList.value = []
-        page.value = 1
-        refreshing.value = false
-    }
-
-    getNotice()
-
-    loading.value = false
-    ++page.value
-    // 待定 不知道返回的总数是什么
-    if (chatList.value.length + interactionList.length + systemList.length >= total.value) {
-        finished.value = true
-    }
-} */
 
 // 测试
 const friendsList = ref([
@@ -96,7 +38,8 @@ const friendsList = ref([
         },
         "status": "ACCEPTED",
         "created_at": "2023-01-01T00:00:00Z"
-    }, {
+    },
+    {
         "id": 2,
         "friend_id": 1002,
         "friend": {
@@ -107,7 +50,8 @@ const friendsList = ref([
         },
         "status": "ACCEPTED",
         "created_at": "2023-01-01T00:00:00Z"
-    }, {
+    },
+    {
         "id": 3,
         "friend_id": 1002,
         "friend": {
@@ -157,121 +101,85 @@ const friendsList = ref([
     }
 ])
 
-const chatList = ref([
+const displayList = ref([
     {
-        "id": 7001,
         "user_id": 1001,
-        "type": "CHAT",
-        "title": "您的动态收到了新的赞",
-        "content": "用户昵称 赞了您的动态 “今天天气真好”",
-        "ref_id": 2001,
-        "ref_type": "POST",
+        "nickname": "好友昵称",
+        "avatar_url": "",
+        "text": "你好",
         "status": "UNREAD",
-        "created_at": "2023-01-01T00:00:00Z",
-        "from_user": { // 如果是用户互动类通知，可包含来源用户信息
-            "id": 1002,
-            "nickname": "用户昵称",
-            "avatar_url": ""
-        }
+        "count": 1,
+        "type": "CHAT",
+        "notification_id": 1
     },
     {
-        "id": 7002,
-        "user_id": 1001,
+        "user_id": 1002,
+        "nickname": "好友昵称",
+        "avatar_url": "",
+        "text": "你好",
+        "status": "UNREAD",
+        "count": 1,
         "type": "CHAT",
-        "title": "您的动态收到了新的赞",
-        "content": "用户昵称 赞了您的动态 “今天天气真好”",
-        "ref_id": 2001,
-        "ref_type": "POST",
+        "notification_id": 1
+    }, {
+        "user_id": 1003,
+        "nickname": "好友昵称",
+        "avatar_url": "",
+        "text": "你好",
         "status": "UNREAD",
-        "created_at": "2023-01-01T00:00:00Z",
-        "from_user": { // 如果是用户互动类通知，可包含来源用户信息
-            "id": 1002,
-            "nickname": "用户昵称",
-            "avatar_url": ""
-        }
-    },
-    {
-        "id": 7003,
-        "user_id": 1001,
+        "count": 1,
         "type": "CHAT",
-        "title": "您的动态收到了新的赞",
-        "content": "用户昵称 赞了您的动态 “今天天气真好”",
-        "ref_id": 2001,
-        "ref_type": "POST",
+        "notification_id": 1
+    }, {
+        "user_id": 1004,
+        "nickname": "好友昵称",
+        "avatar_url": "",
+        "text": "你好",
         "status": "UNREAD",
-        "created_at": "2023-01-01T00:00:00Z",
-        "from_user": { // 如果是用户互动类通知，可包含来源用户信息
-            "id": 1002,
-            "nickname": "用户昵称",
-            "avatar_url": ""
-        }
+        "count": 1,
+        "type": "CHAT",
+        "notification_id": 1
+    }, {
+        "user_id": 1005,
+        "nickname": "好友昵称",
+        "avatar_url": "",
+        "text": "你好",
+        "status": "UNREAD",
+        "count": 1,
+        "type": "CHAT",
+        "notification_id": 1
+    }, {
+        "user_id": 1006,
+        "nickname": "好友昵称",
+        "avatar_url": "",
+        "text": "你好",
+        "status": "UNREAD",
+        "count": 1,
+        "type": "CHAT",
+        "notification_id": 1
     }
 ])
-const interactionList = ref([
-    {
-        "id": 7003,
-        "user_id": 1001,
-        "type": "Interaction",
-        "title": "您的动态收到了新的赞",
-        "content": "用户昵称 赞了您的动态 “今天天气真好”",
-        "ref_id": 2001,
-        "ref_type": "POST",
-        "status": "UNREAD",
-        "created_at": "2023-01-01T00:00:00Z",
-        "from_user": { // 如果是用户互动类通知，可包含来源用户信息
-            "id": 1002,
-            "nickname": "用户昵称",
-            "avatar_url": ""
-        }
-    }
-])
-const systemList = ref([
-    {
-        "id": 7003,
-        "user_id": 1001,
-        "type": "SYSTEM",
-        "title": "您的动态收到了新的赞",
-        "content": "用户昵称 赞了您的动态 “今天天气真好”",
-        "ref_id": 2001,
-        "ref_type": "POST",
-        "status": "UNREAD",
-        "created_at": "2023-01-01T00:00:00Z",
-        "from_user": { // 如果是用户互动类通知，可包含来源用户信息
-            "id": 1002,
-            "nickname": "用户昵称",
-            "avatar_url": ""
-        }
-    }
-])
-
-const onRefresh = () => {
-    finished.value = false
-    // 重新加载数据
-    chatList.value = []
-    interactionList.value = []
-    systemList.value = []
-    // 将 loading 设置为 true，表示处于加载状态
-    loading.value = true
-    onLoad()
-}
 
 const dleChat = (friend_id) => {
-    for (let i = 0; i < chatList.value.length; ++i) {
-        if (chatList.value[i].friend_id === friend_id) {
-            chatList.value.splice(i, 1)
-            break
-        }
-    }
+    // 有computered 自动更新
+    chatMap.value.delete(friend_id)
 }
 
-// 找到这个好友消息的索引
-const findIndexById = (list, id) => {
-    return list.findIndex(item => item.id === id)
+const findValueByNotificationId = (targetNotificationId) => {
+    for (const value of chatMap.value.values()) {
+        if (value.notification_id === targetNotificationId) {
+            return value
+        }
+    }
+    return null
 }
 const read = async (list, notification_id) => {
     await readNotice(notification_id)
-    const ind = findIndexById(list.value, notification_id)
-    list.value[ind].status = 'READ'
+    const value = findValueByNotificationId(notification_id)
+    if (value) {
+        value.status = 'READ'
+    }
+    chatMap.value.set(value.user_id, value)
 }
 </script>
 
@@ -298,71 +206,67 @@ const read = async (list, notification_id) => {
             </div>
         </div>
 
-        <van-pull-refresh v-model="refreshing" @refresh="onRefresh" class="pull-refresh-container">
-
-            <div class="sys-iteraction">
-                <van-cell-group border>
-                    <van-cell @click="read(systemList, systemList[systemList.length - 1].id)">
+        <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+            <van-cell-group border>
+                <van-swipe-cell v-for="item in displayList" :key="item.user_id">
+                    <van-cell v-if="item.type === 'CHAT'">
+                        <template #title>
+                            <div class="avatar-nickname">
+                                <van-image class="custom-image" :src="item.avatar_url || defaultAvatar" />
+                                <div class="text">
+                                    <p class="custom-title">{{ item.nickname || '匿名用户' }}</p>
+                                    <p class="custom-last-chat">{{ item.text }}</p>
+                                </div>
+                            </div>
+                        </template>
+                        <template #right-icon>
+                            <div class="un-read" v-if="item.status === 'UNREAD'">
+                                {{ item.count }}
+                            </div>
+                        </template>
+                    </van-cell>
+                    <van-cell v-else-if="item.type === 'SYSTEM'">
                         <template #title>
                             <div class="sys">
                                 <van-icon name="setting" class="system-icon" />
                                 <div class="text">
                                     <p class="custom-title">系统消息</p>
-                                    <p class="custom-last-chat">{{ systemList[systemList.length - 1].content }}</p>
+                                    <p class="custom-last-chat">{{ item.text }}</p>
                                 </div>
                             </div>
                         </template>
                         <template #right-icon>
-                            <div class="un-read" v-if="systemList[systemList.length - 1].status === 'UNREAD'"></div>
+                            <div class="un-read" v-if="item.status === 'UNREAD'">
+                                {{ item.count }}
+                            </div>
                         </template>
                     </van-cell>
-                    <van-cell @click="read(interactionList, interactionList[interactionList.length - 1].id)">
+
+                    <van-cell v-else-if="item.type === 'INTERACTION'">
                         <template #title>
                             <div class="interaction">
                                 <van-icon name="bell" class="interaction-icon" />
                                 <div class="text">
                                     <p class="custom-title">互动消息</p>
-                                    <p class="custom-last-chat">{{ interactionList[interactionList.length - 1].content
-                                    }}
-                                    </p>
+                                    <p class="custom-last-chat">{{ item.text }}</p>
                                 </div>
                             </div>
                         </template>
                         <template #right-icon>
-                            <div class="un-read" v-if="interactionList[interactionList.length - 1].status === 'UNREAD'">
+                            <div class="un-read" v-if="item.status === 'UNREAD'">
+                                {{ item.count }}
                             </div>
                         </template>
                     </van-cell>
-                </van-cell-group>
-            </div>
-
-            <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-                <van-cell-group border>
-                    <van-swipe-cell v-for="item in chatList" :key="item.id">
-                        <van-cell @click="router.push('/login')">
-                            <template #title>
-                                <div class="avatar-nickname">
-                                    <van-image class="custom-image" :src="item.from_user.avatar_url || defaultAvatar" />
-                                    <div class="text">
-                                        <p class="custom-title">{{ item.from_user.nickname || '匿名用户' }}</p>
-                                        <p class="custom-last-chat">{{ item.content }}</p>
-                                    </div>
-                                </div>
-                            </template>
-                            <template #right-icon>
-                                <div class="un-read" v-if="chatList[chatList.length - 1].status === 'UNREAD'"></div>
-                            </template>
-                        </van-cell>
-                        <template #right>
-                            <van-button square text="已读" color="#c4c0c0" class="read-button"
-                                @click="read(chatList, item.id)" />
-                            <van-button square text="删除" type="danger" class="delete-button"
-                                @click="dleChat(item.friend_id)" />
-                        </template>
-                    </van-swipe-cell>
-                </van-cell-group>
-            </van-list>
-        </van-pull-refresh>
+                    <template #right>
+                        <van-button square text="已读" color="#c4c0c0" class="read-button"
+                            @click="read(chatList, item.id)" v-if="item.status === 'UNREAD' && item.type === 'CHAT'" />
+                        <van-button square text="删除" type="danger" class="delete-button"
+                            @click="dleChat(item.friend_id)" />
+                    </template>
+                </van-swipe-cell>
+            </van-cell-group>
+        </van-list>
     </div>
     <div class="no-friends" v-else>
         <van-empty description="暂无好友" />
@@ -372,9 +276,16 @@ const read = async (list, notification_id) => {
 <style lang="less" scoped>
 .un-read {
     background-color: red;
-    width: 10px;
-    height: 10px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    line-height: 20px;
+    position: absolute;
+    right: 18px;
+    top: 28px;
 }
 
 .search-icon,

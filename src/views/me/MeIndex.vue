@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import defaultAvatar from "@/assets/image/default.png"
 import { useRouter } from 'vue-router';
-import { getUserInfo } from '@/api/user'
+import { getUserInfo, logout } from '@/api/user'
 import { useUserStore } from '@/stores';
 
 const router = useRouter()
@@ -13,12 +13,13 @@ const formModel = ref({})
 onMounted(async () => {
     /* const { data: { data } } = await getUserInfo()
     formModel.value = data */
-    formModel.value = { "id": 1001, "nickname": "用户昵称", "avatar_url": "https://oss.example.com/avatar.jpg", "birthday": "1990-01-01", "gender": 1, "campus_id": 1, "campus_name": "北京大学", "qq_openid": "xxx", "mobile": "13800138000", "real_name": "张三", "id_card_no": "110101199001011234", "is_real_name": 0, "privacy_mobile": 1, "privacy_birthday": 0, "privacy_fans": 1, "status": 0, "created_at": "2023-01-01T00:00:00Z", "updated_at": "2023-01-01T00:00:00Z" }
+    formModel.value = { "id": 1001, "nickname": "WHUT", "avatar_url": "https://oss.example.com/avatar.jpg", "birthday": "1990-01-01", "gender": 1, "campus_id": 1, "campus_name": "北京大学", "qq_openid": "xxx", "mobile": "13800138000", "real_name": "张三", "id_card_no": "110101199001011234", "is_real_name": 0, "privacy_mobile": 1, "privacy_birthday": 0, "privacy_fans": 1, "status": 0, "created_at": "2023-01-01T00:00:00Z", "updated_at": "2023-01-01T00:00:00Z" }
 })
 const avatarUrl = formModel.value.avatar_url
 
 const userStore = useUserStore()
-const logout = async () => {
+const Logout = async () => {
+    await logout()
     userStore.setToken('')
     await router.push('/login')
     showSuccessToast('退出成功')
@@ -83,7 +84,7 @@ const logout = async () => {
                     <van-icon name="arrow" />
                 </div>
             </div>
-            <van-button type="danger" plain replace class="logout-button" @click="logout">退出登录</van-button>
+            <van-button type="danger" plain replace class="logout-button" @click="Logout">退出登录</van-button>
         </div>
     </div>
     <!-- <div v-else class="un-login">

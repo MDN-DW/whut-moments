@@ -5,19 +5,25 @@ export const getUserInfo = () => {
     return request.get('/api/users/me')
 }
 
-// 获取验证码
-export const getCode = () => {
-    return request.post('/api/auth/mobile/send-code', {
-
+// 登录
+export const login = ({ account, password }) => {
+    return request.post('/api/auth/password/login', {
+        account,
+        password
     })
 }
 
-// 登录
-export const login = ({ mobile, code }) => {
-    return request.post('/api/auth/mobile/login', {
-        mobile,
-        code
+// 注册
+export const register = ({ account, password }) => {
+    return request.post('/api/auth/register', {
+        account,
+        password
     })
+}
+
+// 退出登录
+export const logout = () => {
+    return request.post('/api/auth/logout')
 }
 
 // 更新用户信息

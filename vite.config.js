@@ -35,5 +35,14 @@ export default defineConfig({
         }),
       ]
     }
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://192.168.43.1:8080',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
   }
 })

@@ -7,3 +7,5 @@ pinia.use(piniaPluginPersistedstate)
 export default pinia
 
 export * from './modules/user'
+export * from './modules/notice'
+export * from './modules/socket'

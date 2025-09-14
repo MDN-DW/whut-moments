@@ -124,6 +124,11 @@ const router = createRouter({
       // 搜索好友页
       path: '/search/partner',
       component: () => import('@/views/search/SearchPartner.vue')
+    },
+    {
+      // 发布任务和编辑任务
+      path: '/task/publish/:id?',
+      component: () => import('@/views/task/PublishTask.vue')
     }
   ],
 })
