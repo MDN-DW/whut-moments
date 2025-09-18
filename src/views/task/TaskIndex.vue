@@ -38,48 +38,53 @@ const take = async (task_id) => {
 // 测试
 const taskTags = ref([
     {
-        id: 1,
-        tag: "全部"
+        "id": 1,
+        "name": "全部",
+        "category": "POST",
+        "weight": 100,
+        "is_hot": 1
     },
     {
-        id: 2,
-        tag: "学习"
+        "id": 2,
+        "name": "校园生活",
+        "category": "POST",
+        "weight": 100,
+        "is_hot": 1
     },
     {
-        id: 3,
-        tag: "运动"
+        "id": 3,
+        "name": "校园生活",
+        "category": "POST",
+        "weight": 100,
+        "is_hot": 1
     },
     {
-        id: 4,
-        tag: "工作"
+        "id": 4,
+        "name": "校园生活",
+        "category": "POST",
+        "weight": 100,
+        "is_hot": 1
     },
     {
-        id: 5,
-        tag: "生活"
+        "id": 5,
+        "name": "校园生活",
+        "category": "POST",
+        "weight": 100,
+        "is_hot": 1
     },
     {
-        id: 6,
-        tag: "其他"
+        "id": 6,
+        "name": "校园生活",
+        "category": "POST",
+        "weight": 100,
+        "is_hot": 1
     },
     {
-        id: 7,
-        tag: "其他"
-    },
-    {
-        id: 8,
-        tag: "其他"
-    },
-    {
-        id: 9,
-        tag: "其他"
-    },
-    {
-        id: 10,
-        tag: "其他"
-    },
-    {
-        id: 11,
-        tag: "其他"
+        "id": 7,
+        "name": "校园生活",
+        "category": "POST",
+        "weight": 100,
+        "is_hot": 1
     },
 ])
 const selectedTagId = ref(taskTags.value[0].id)
@@ -244,6 +249,10 @@ const taskList = ref([
             {
                 "id": 5,
                 "name": "跑腿"
+            },
+            {
+                "id": 5,
+                "name": "跑腿"
             }
         ],
         "stats": {
@@ -265,10 +274,6 @@ const collectOrCancle = async (task_id, is_favorited) => {
     await getTasks('', '')
 }
 
-const publish = async () => {
-    await publishTask()
-}
-
 </script>
 
 <template>
@@ -285,18 +290,21 @@ const publish = async () => {
         <div class="tag-scroll-wrapper">
             <div v-for="item in taskTags" :key="item.id" class="tag-item"
                 :class="{ 'tag-item-active': selectedTagId === item.id }" @click="selectTag(item.id)">
-                <div class="tag-name">{{ item.tag }}</div>
+                <div class="tag-name">{{ item.name }}</div>
             </div>
         </div>
     </div>
 
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
         <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-            <van-cell v-for="item in taskList" :key="item.id">
+            <van-cell v-for="item in taskList" :key="item.id" @click="router.push(`/task/detail/${item.id}`)">
                 <div class="top">
-                    <van-tag type="primary" class="tag" v-for="value in item.tags" color="#fef6fb" text-color="#f9b5df">
-                        {{ value.name }}
-                    </van-tag>
+                    <div class="tags">
+                        <van-tag type="primary" class="tag" v-for="value in item.tags" :key="value.id" color="#fef6fb"
+                            text-color="#f9b5df">
+                            {{ value.name }}
+                        </van-tag>
+                    </div>
                     <div class="status">
                         <van-tag type="primary" v-if="item.status === 'RUNNING'">
                             进行中
@@ -369,6 +377,16 @@ const publish = async () => {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 10px;
+
+    .tags {
+        display: flex;
+
+        .tag {
+            margin-right: 5px;
+        }
+    }
+
+
 }
 
 .title {

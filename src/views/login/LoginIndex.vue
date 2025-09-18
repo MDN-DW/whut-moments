@@ -17,6 +17,7 @@ const userStore = useUserStore()
 const Login = async () => {
     const { data: data } = await login({ account: account.value, password: password.value })
     userStore.setToken(data.access_token)
+    userStore.setUserInfo({ id: data.user.id, nickname: data.user.nickname, avatar: data.user.avatar_url, })
     show.value = false
     account.value = ''
     password.value = ''
@@ -97,7 +98,7 @@ const Register = async () => {
 <style lang="less" scoped>
 .login {
 
-    background: linear-gradient(to bottom, #ffcce6, #b3d9ff, #ffffff 50%);
+    background: linear-gradient(to bottom, #ffcce6, #b3d9ff, #ffffff 80%);
 
     .container {
         height: 100vh;

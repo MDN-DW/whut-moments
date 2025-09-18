@@ -8,7 +8,12 @@ export const useUserStore = defineStore('user', () => {
         token.value = newToken
     }
 
-    return { token, setToken }
+    const userInfo = ref({})
+    const setUserInfo = (newUserInfo) => {
+        userInfo.value = newUserInfo
+    }
+
+    return { token, setToken, userInfo, setUserInfo }
 }, {
     persist: [
         {
@@ -19,6 +24,20 @@ export const useUserStore = defineStore('user', () => {
                 serialize: (state) => {
                     // 只序列化指定的字段
                     return JSON.stringify({ token: state.token })
+                },
+                deserialize: (value) => {
+                    return JSON.parse(value || '{}')
+                }
+            }
+        },
+        {
+            key: 'user-info',
+            paths: ['userInfo'],
+            storage: localStorage,
+            serializer: {
+                serialize: (state) => {
+                    // 只序列化指定的字段
+                    return JSON.stringify({ userInfo: state.userInfo })
                 },
                 deserialize: (value) => {
                     return JSON.parse(value || '{}')

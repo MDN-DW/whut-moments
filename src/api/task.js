@@ -60,7 +60,7 @@ export const publishTask = ({ title, content, reward, visibility, expire_at, fil
 }
 
 // 编辑任务
-export const editTask = ({ task_id, title, content, reward, visibility, expire_at, file_ids, tag_ids }) => {
+export const editTask = (task_id, { title, content, reward, visibility, expire_at, file_ids, tag_ids }) => {
     return request.put(`/api/tasks/${task_id}`, {
         title,
         content,

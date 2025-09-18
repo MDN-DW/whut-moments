@@ -11,9 +11,11 @@ const page = ref(1)
 const size = ref(20)
 const total = ref(0)
 // 正式
-// const res = await getBlackList({ page: page.value, size: size.value })
-// blackList.value = res.data.data.list
-// total.value = res.data.data.pagination.total
+/* onMounted(async () => {
+    const res = await getBlackList({ page: page.value, size: size.value })
+    blackList.value = res.data.data.list
+    total.value = res.data.data.pagination.total
+}) */
 
 // 测试
 blackList.value = [
@@ -215,7 +217,6 @@ const cancelBlack = async (target_id) => {
                 <p class="content">你可以在好友列表或聊天中，将骚扰、违规用户加入黑名单</p>
                 <strong class="go">去好友列表看看</strong>
             </template>
-
         </van-empty>
     </div>
 </template>

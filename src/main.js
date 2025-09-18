@@ -13,6 +13,8 @@ import { showNotify, Notify } from 'vant'
 import { h } from 'vue'
 import 'vant/es/notify/style'
 import MessageDialogAvatar from './components/MessageDialogAvatar.vue'
+import keyboardDirective from './directives/keyboard'
+import '@/assets/css/my-icon/iconfont.css'
 
 const app = createApp(App)
 
@@ -55,5 +57,8 @@ watch(latest, (msg) => {
     })
 }
 )
+
+// 注册全局自定义指令
+app.directive('keyboard', keyboardDirective)
 
 app.mount('#app')

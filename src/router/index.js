@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginIndex from '@/views/login/LoginIndex.vue'
 import LayoutIndex from '@/views/layout/LayoutIndex.vue'
-import FriendsIndex from '@/views/friends/FriendsIndex.vue'
+import PostIndex from '@/views/post/PostIndex.vue'
 import { useUserStore } from '@/stores'
 
 const router = createRouter({
@@ -16,12 +16,12 @@ const router = createRouter({
       // 首页架子
       path: '/',
       component: LayoutIndex,
-      redirect: '/friends',
+      redirect: '/posts',
       children: [
         {
           // 朋友圈
-          path: '/friends',
-          component: FriendsIndex
+          path: '/posts',
+          component: PostIndex
         },
         {
           // 任务
@@ -46,9 +46,9 @@ const router = createRouter({
       component: () => import('@/views/search/SearchIndex.vue')
     },
     {
-      // 帖子搜索页
-      path: '/search/content',
-      component: () => import('@/views/search/SearchContent.vue')
+      // 帖子搜索结果页
+      path: '/search/result',
+      component: () => import('@/views/search/SearchResult.vue')
     },
     {
       // 用户搜索页
@@ -71,28 +71,17 @@ const router = createRouter({
       component: () => import('@/views/me/CollectionIndex.vue')
     },
     {
-      // 文章详情页
-      path: '/article'
-    },
-    {
-      // 任务详情页
-      path: '/task/content'
-    },
-    {
       // 任务评价页
       path: '/task/rate'
     },
     {
-      // 发朋友圈写内容页
-      path: '/friends/content'
+      // 发朋友圈写内容页 编辑朋友圈页
+      path: '/posts/content/:id?',
+      component: () => import('@/views/post/PostPublish.vue')
     },
     {
       // 我的朋友圈列表页
-      path: '/friends/list'
-    },
-    {
-      // 编辑朋友圈页
-      path: '/friends/edit'
+      path: '/myposts/list'
     },
     {
       // 主页访问页
@@ -129,7 +118,16 @@ const router = createRouter({
       // 发布任务和编辑任务
       path: '/task/publish/:id?',
       component: () => import('@/views/task/PublishTask.vue')
-    }
+    },
+    {
+      // 任务详情 后面合并
+      path: '/task/detail/:id',
+    },
+    {
+      // 朋友圈详情页
+      path: '/posts/detail/:id',
+      component: () => import('@/views/post/PostDetail.vue')
+    },
   ],
 })
 
@@ -144,7 +142,7 @@ router.beforeEach((to) => {
   if (userStore.token) {
     return true
   }
-  return '/login'
-}) */
+  return '/login' 
+})*/
 
 export default router

@@ -1,16 +1,20 @@
 import request from "@/utils/request";
 
-// 获取热门搜索
-export const getHotSearch = (limit) => {
-    return request.get(`/api/search/hotwords?${limit}`)
+// 获取热门话题
+export const getHotTopics = () => {
+    return request.get('/api/topis/hot')
 }
 
-// 获取搜索结果
-export const getSearchList = (keyword, type, page, size) => {
+// 获取热门动态
+export const getHotPosts = () => {
+    return request.get('/api/search/hotposts')
+}
+
+// 获取话题搜索结果
+export const getSearchList = (keyword, page, size) => {
     return request.get('/api/search', {
         params: {
             keyword,
-            type,
             page,
             size
         }

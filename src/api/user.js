@@ -27,7 +27,7 @@ export const logout = () => {
 }
 
 // 更新用户信息
-export const updateUerInfo = ({ nickname, avatar_url, birthday, gender, campus_id, privacy_mobile, privacy_birthday, privacy_fans }) => {
+export const updateUerInfo = ({ nickname = '匿名用户', avatar_url, birthday, gender, campus_id, privacy_mobile, privacy_birthday, privacy_fans }) => {
     return request.put('/api/users/profile', {
         nickname,
         avatar_url,
@@ -37,6 +37,10 @@ export const updateUerInfo = ({ nickname, avatar_url, birthday, gender, campus_i
         privacy_mobile,
         privacy_birthday,
         privacy_fans
+    }, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
     })
 }
 

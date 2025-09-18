@@ -10,14 +10,18 @@ const router = useRouter()
 
 const formModel = ref({})
 
+const userStore = useUserStore()
+
 onMounted(async () => {
     /* const { data: { data } } = await getUserInfo()
     formModel.value = data */
-    formModel.value = { "id": 1001, "nickname": "WHUT", "avatar_url": "https://oss.example.com/avatar.jpg", "birthday": "1990-01-01", "gender": 1, "campus_id": 1, "campus_name": "北京大学", "qq_openid": "xxx", "mobile": "13800138000", "real_name": "张三", "id_card_no": "110101199001011234", "is_real_name": 0, "privacy_mobile": 1, "privacy_birthday": 0, "privacy_fans": 1, "status": 0, "created_at": "2023-01-01T00:00:00Z", "updated_at": "2023-01-01T00:00:00Z" }
+
+    formModel.value = { "id": 1001, "nickname": "WHUT", "avatar_url": "", "birthday": "1990-01-01", "gender": 1, "campus_id": 1, "campus_name": "北京大学", "qq_openid": "xxx", "mobile": "13800138000", "real_name": "张三", "id_card_no": "110101199001011234", "is_real_name": 0, "privacy_mobile": 1, "privacy_birthday": 0, "privacy_fans": 1, "status": 0, "created_at": "2023-01-01T00:00:00Z", "updated_at": "2023-01-01T00:00:00Z" }
+    userStore.setUserInfo({ id: formModel.value.id, nickname: formModel.value.nickname, avatar: formModel.value.avatar_url })
 })
+
 const avatarUrl = formModel.value.avatar_url
 
-const userStore = useUserStore()
 const Logout = async () => {
     await logout()
     userStore.setToken('')
@@ -33,8 +37,7 @@ const Logout = async () => {
         </div>
         <div class="container">
             <div class="avatar-baseinfo">
-                <van-image v-if="avatarUrl" :src="avatarUrl" round fit="cover" />
-                <van-image v-else :src="defaultAvatar" round fit="cover" />
+                <van-image :src="avatarUrl || defaultAvatar" round fit="cover" />
                 <div class="nickname">
                     {{ formModel.nickname || '匿名用户' }}
                 </div>
