@@ -15,10 +15,9 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const Login = async () => {
-    const { data: data } = await login({ account: account.value, password: password.value })
-    userStore.setToken(data.access_token)
-    userStore.setUserInfo({ id: data.user.id, nickname: data.user.nickname, avatar: data.user.avatar_url, })
-    show.value = false
+    const { data: { data } } = await login({ account: account.value, password: password.value })
+    userStore.setToken(data.accessToken)
+    userStore.setUserInfo({ id: data.user.id, nickName: data.user.nickName, avatar: data.user.avatarUrl })
     account.value = ''
     password.value = ''
     showSuccessToast('登录成功')
@@ -29,7 +28,7 @@ const Login = async () => {
 const validator = (val) => val === password.value
 
 const Register = async () => {
-    await register({ account: account.value, password: password.value })
+    await register(account.value, password.value)
     showSuccessToast('注册成功')
     showRigister.value = false
     account.value = ''
@@ -98,7 +97,12 @@ const Register = async () => {
 <style lang="less" scoped>
 .login {
 
-    background: linear-gradient(to bottom, #ffcce6, #b3d9ff, #ffffff 80%);
+    background: linear-gradient(135deg,
+            #fce7f3 0%,
+            #e0f2fe 100%);
+    backdrop-filter: blur(10px);
+    /* 模糊效果增强层次感 */
+    position: relative;
 
     .container {
         height: 100vh;
@@ -115,6 +119,7 @@ const Register = async () => {
         .cancle-btn {
             border-radius: 15px;
             margin-top: 10px;
+            font-size: 16px;
         }
 
         .cancle-btn {
@@ -181,6 +186,7 @@ const Register = async () => {
                 letter-spacing: 2px;
                 text-align: center;
                 line-height: 42px;
+                font-size: 16px;
             }
 
             .register-btn {

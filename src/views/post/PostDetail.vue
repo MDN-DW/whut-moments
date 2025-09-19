@@ -1,5 +1,5 @@
 <script setup>
-import { getPostDetail, getCommentList } from "@/api/posts";
+import { getPostDetail, getCommentList, likePost, cancelLikePost, collectPost, cancelCollectPost, sharePost, likeComment, cancelLikeComment, publishComment, deleteComment } from "@/api/posts";
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import defaultAvatar from "@/assets/image/default.png"
@@ -12,31 +12,30 @@ const route = useRoute()
 
 const postId = route.params.id
 
-// 正式
-/* const post = ref({})
- onMounted(async () => {
+const post = ref({})
+onMounted(async () => {
     const { data: { data } } = await getPostDetail(postId)
     post.value = data
-}) */
+})
 
 // 测试
-const post = ref({
+/* const post = ref({
     "id": 2001,
     "user": {
         "id": 1001,
-        "nickname": "用户昵称",
-        "avatar_url": ""
+        "nickName": "用户昵称",
+        "avatarUrl": ""
     },
     "content": "动态内容",
     "visibility": "PUBLIC",
-    "poi_name": "天安门广场",
-    "is_top": 0,
+    "poiName": "天安门广场",
+    "isTop": 0,
     "status": "PUBLISHED",
     "files": [
         {
             "id": 1001,
-            "file_url": "D:/Front-End/whut-moments/src/assets/image/default.png",
-            "thumb_url": "",
+            "fileUrl": "D:/Front-End/whut-moments/src/assets/image/default.png",
+            "thumbUrl": "",
             "size": 1024000
         }
     ],
@@ -69,18 +68,18 @@ const post = ref({
         }
     ],
     "stats": {
-        "view_cnt": 100,
-        "like_cnt": 10,
-        "comment_cnt": 5,
-        "share_cnt": 2
+        "viewCnt": 100,
+        "likeCnt": 10,
+        "commentCnt": 5,
+        "shareCnt": 2
     },
-    "user_actions": {
-        "is_liked": false,
-        "is_favorited": false
+    "userActions": {
+        "isLiked": false,
+        "isFavorited": false
     },
-    "created_at": "2023-01-01T00:00:00Z",
-    "updated_at": "2023-01-01T00:00:00Z"
-})
+    "createdAt": "2023-01-01T00:00:00Z",
+    "updatedAt": "2023-01-01T00:00:00Z"
+}) */
 
 const commentList = ref([])
 
@@ -91,11 +90,10 @@ const commentLoading = ref(false)
 const commentFinished = ref(false)
 const refreshing = ref(false)
 
-// 正式
-/* onMounted(async () => {
+onMounted(async () => {
     onLoad()
 })
- */
+
 
 const onLoad = async () => {
     if (refreshing.value) {
@@ -103,69 +101,68 @@ const onLoad = async () => {
         refreshing.value = false
     }
 
-    // 正式
-    /* const { data: data } = await getCommentList(route.params.id, { page: commentPage.value, size: commentSize.value })
+    const { data: data } = await getCommentList(route.params.id, { page: commentPage.value, size: commentSize.value })
 
     if (commentPage.value === 1) {
         commentList.value = data.list
     } else {
         commentList.value.push(...data.list)
-    } */
+    }
 
     // 测试
-    commentList.value = [
+    /* commentList.value = [
         {
             "id": 3001,
             "user": {
                 "id": 1001,
-                "nickname": "评论者",
-                "avatar_url": ""
+                "nickName": "评论者",
+                "avatarUrl": ""
             },
-            "at_users": [
+            "atUsers": [
                 {
                     "id": 1001,
-                    "nickname": "评论者"
+                    "nickName": "评论者"
                 }
             ],
             "content": "一级评论内容",
-            "parent_id": 0,
-            "like_cnt": 5, // 评论点赞数
-            "is_liked": true, // 当前用户是否点赞
-            "reply_count": 2, // 回复数量
-            "created_at": "2023-01-01T00:00:00Z",
+            "parentId": 0,
+            "likeCnt": 5, // 评论点赞数
+            "isLiked": true, // 当前用户是否点赞
+            "replyCount": 2, // 回复数量
+            "createdAt": "2023-01-01T00:00:00Z",
             "replies": [ // 二级评论（最多返回几条，或只返回 count）
                 {
                     "id": 3002,
                     "user": {
                         "id": 1002,
-                        "nickname": "回复者",
-                        "avatar_url": ""
+                        "nickName": "回复者",
+                        "avatarUrl": ""
                     },
-                    "at_users": [
+                    "atUsers": [
                         {
                             "id": 1001,
-                            "nickname": "评论者"
+                            "nickName": "评论者"
                         },
                         {
                             "id": 1001,
-                            "nickname": "评论者"
+                            "nickName": "评论者"
                         }
                     ],
                     "content": "回复内容",
-                    "parent_id": 3001,
-                    "like_cnt": 2,
-                    "is_liked": false,
-                    "created_at": "2023-01-01T00:00:10Z"
+                    "parentId": 3001,
+                    "likeCnt": 2,
+                    "isLiked": false,
+                    "createdAt": "2023-01-01T00:00:10Z"
                 }
             ]
         }
-    ]
+    ] */
 
     commentLoading.value = false
 
-    /* if (commentList.value.length >= data.pagination.total) {
+    if (commentList.value.length >= data.pagination.total) {
         finished.value = true
-    } */
+    }
 }
 
 const onRefresh = () => {
@@ -180,132 +177,132 @@ const onRefresh = () => {
 }
 
 const like = async () => {
-    if (post.value.user_actions.is_liked) {
+    if (post.value.userActions.isLiked) {
         const { data: data } = await cancelLikePost(postId)
-        post.value.user_actions.is_liked = false
-        post.value.stats.like_cnt = data.like_cnt
+        post.value.userActions.isLiked = false
+        post.value.stats.likeCnt = data.likeCnt
     } else {
         const { data: data } = await likePost(postId)
-        post.value.user_actions.is_liked = true
-        post.value.stats.like_cnt = data.like_cnt
+        post.value.userActions.isLiked = true
+        post.value.stats.likeCnt = data.likeCnt
     }
 }
 
 const collect = async () => {
-    if (post.value.user_actions.is_favorited) {
+    if (post.value.userActions.isFavorited) {
         await cancelCollectPost(postId)
-        post.value.user_actions.is_favorited = false
+        post.value.userActions.isFavorited = false
     } else {
         await collectPost(postId)
-        post.value.user_actions.is_favorited = true
+        post.value.userActions.isFavorited = true
     }
 }
 
 const share = async () => {
     const { data: data } = await sharePost(postId)
-    post.value.stats.share_cnt = data.share_cnt
+    post.value.stats.shareCnt = data.shareCnt
 }
 
 // 根据id查找comment
 const findCommentById = (commentId) => {
     return commentList.value.find(comment => comment.id === commentId)
 }
-const likeComments = async (commentId, is_liked) => {
+const likeComments = async (commentId, isLiked) => {
     const comment = findCommentById(commentId)
-    if (is_liked) {
+    if (isLiked) {
         const { data: { data } } = await cancelLikeComment(commentId)
-        comment.is_liked = false
-        comment.like_cnt = data.like_cnt
+        comment.isLiked = false
+        comment.likeCnt = data.likeCnt
     } else {
         const { data: { data } } = await likeComment(commentId)
-        comment.is_liked = true
-        comment.like_cnt = data.like_cnt
+        comment.isLiked = true
+        comment.likeCnt = data.likeCnt
     }
 }
 
 // 正式
-/* const friendsList = ref([])
+const friendsList = ref([])
 
 onMounted(async () => {
     const { data: { data } } = await getFriendsList({ page: 0, size: 0, status: 'ACCEPTED' })
     friendsList.value = data.list
-}) */
+})
 
 // 测试
-const friendsList = ref([
+/* const friendsList = ref([
     {
         "id": 1,
-        "friend_id": 1002,
+        "friendId": 1002,
         "friend": {
             "id": 1002,
-            "nickname": "好友昵称",
-            "avatar_url": "",
-            "campus_name": "北京大学"
+            "nickName": "好友昵称",
+            "avatarUrl": "",
+            "campusName": "北京大学"
         },
         "status": "ACCEPTED",
-        "created_at": "2023-01-01T00:00:00Z"
+        "createdAt": "2023-01-01T00:00:00Z"
     },
     {
         "id": 2,
-        "friend_id": 1003,
+        "friendId": 1003,
         "friend": {
             "id": 1002,
-            "nickname": "好友昵称",
-            "avatar_url": "",
-            "campus_name": "北京大学"
+            "nickName": "好友昵称",
+            "avatarUrl": "",
+            "campusName": "北京大学"
         },
         "status": "ACCEPTED",
-        "created_at": "2023-01-01T00:00:00Z"
+        "createdAt": "2023-01-01T00:00:00Z"
     },
     {
         "id": 3,
-        "friend_id": 1004,
+        "friendId": 1004,
         "friend": {
             "id": 1002,
-            "nickname": "好友昵称",
-            "avatar_url": "",
-            "campus_name": "北京大学"
+            "nickName": "好友昵称",
+            "avatarUrl": "",
+            "campusName": "北京大学"
         },
         "status": "ACCEPTED",
-        "created_at": "2023-01-01T00:00:00Z"
+        "createdAt": "2023-01-01T00:00:00Z"
     },
     {
         "id": 4,
-        "friend_id": 1005,
+        "friendId": 1005,
         "friend": {
             "id": 1002,
-            "nickname": "好友昵称",
-            "avatar_url": "",
-            "campus_name": "北京大学"
+            "nickName": "好友昵称",
+            "avatarUrl": "",
+            "campusName": "北京大学"
         },
         "status": "ACCEPTED",
-        "created_at": "2023-01-01T00:00:00Z"
+        "createdAt": "2023-01-01T00:00:00Z"
     },
     {
         "id": 5,
-        "friend_id": 1006,
+        "friendId": 1006,
         "friend": {
             "id": 1002,
-            "nickname": "好友昵称",
-            "avatar_url": "",
-            "campus_name": "北京大学"
+            "nickName": "好友昵称",
+            "avatarUrl": "",
+            "campusName": "北京大学"
         },
         "status": "ACCEPTED",
-        "created_at": "2023-01-01T00:00:00Z"
+        "createdAt": "2023-01-01T00:00:00Z"
     },
     {
         "id": 6,
-        "friend_id": 1007,
+        "friendId": 1007,
         "friend": {
             "id": 1002,
-            "nickname": "好友昵称",
-            "avatar_url": "",
-            "campus_name": "北京大学"
+            "nickName": "好友昵称",
+            "avatarUrl": "",
+            "campusName": "北京大学"
         },
         "status": "ACCEPTED",
-        "created_at": "2023-01-01T00:00:00Z"
+        "createdAt": "2023-01-01T00:00:00Z"
     }
-])
+]) */
 
 const atFlag = ref(false)
 
@@ -351,22 +348,22 @@ const handleAtClick = () => {
     }
 }
 
-const atOrNotAt = (at_id) => {
-    const currentValue = atUsersFlag.value.get(at_id) || false
-    atUsersFlag.value.set(at_id, !currentValue)
+const atOrNotAt = (atId) => {
+    const currentValue = atUsersFlag.value.get(atId) || false
+    atUsersFlag.value.set(atId, !currentValue)
     atUsers.value = [...atUsersFlag.value.entries()]
         .filter(([key, value]) => value)
         .map(([key]) => key)
 }
 
 const currentReplyTo = ref(null)
-const setReplyTo = (parent_id) => {
-    currentReplyTo.value = parent_id
+const setReplyTo = (parentId) => {
+    currentReplyTo.value = parentId
 }
 // 处理评论的评论按钮点击
-const secondComment = (parent_id) => {
-    // 设置parent_id 通过这个来标识是评论的评论还是评论帖子
-    setReplyTo(parent_id)
+const secondComment = (parentId) => {
+    // 设置parentId 通过这个来标识是评论的评论还是评论帖子
+    setReplyTo(parentId)
 
     // 点击评论按钮时，让输入框获得焦点
     if (commentInput.value) {
@@ -406,8 +403,8 @@ const publish = async () => {
         // 二级评论
         const { data: { data } } = await publishComment(postId, {
             content: commentContent.value,
-            parent_id: currentReplyTo.value,
-            at_users: atUsers.value
+            parentId: currentReplyTo.value,
+            atUsers: atUsers.value
         })
         commentList.value.replies.push(data)
         commentContent.value = ''
@@ -416,8 +413,8 @@ const publish = async () => {
         // 一级评论
         const { data: { data } } = await publishComment(postId, {
             content: commentContent.value,
-            parent_id: 0,
-            at_users: atUsers.value
+            parentId: 0,
+            atUsers: atUsers.value
         })
         commentList.value.push(data)
         commentContent.value = ''
@@ -439,18 +436,18 @@ const deleteUserComment = async (commentId) => {
         <div class="post">
             <div class="user-info">
                 <div class="avatar">
-                    <van-image :src="post.user.avatar_url || defaultAvatar" class="avatar-image" />
+                    <van-image :src="post.user.avatarUrl || defaultAvatar" class="avatar-image" />
                 </div>
                 <div class="nickname-time">
-                    <div class="nickname">{{ post.user.nickname }}</div>
+                    <div class="nickname">{{ post.user.nickName }}</div>
                     <div class="time">
-                        <span class="time-text">{{ timeAgo(post.created_at) }}</span>
+                        <span class="time-text">{{ timeAgo(post.createdAt) }}</span>
                     </div>
                 </div>
 
-                <div class="view-cnt" v-if="post.stats.view_cnt">
+                <div class="view-cnt" v-if="post.stats.viewCnt">
                     <van-icon name="eye-o" class="view-icon" />
-                    <span class="view-cnt-text">{{ post.stats.view_cnt }}</span>
+                    <span class="view-cnt-text">{{ post.stats.viewCnt }}</span>
                 </div>
             </div>
 
@@ -473,45 +470,45 @@ const deleteUserComment = async (commentId) => {
                     <div class="file-scroll-container">
                         <div class="file-scroll-wrapper">
                             <div v-for="item in post.files" :key="item.id" class="file-item">
-                                <van-image class="file-image" :src="item.file_url" />
+                                <van-image class="file-image" :src="item.fileUrl" />
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="location" v-if="post.poi_name">
+                <div class="location" v-if="post.poiName">
                     <van-icon name="location-o" />
-                    <div class="location-text">{{ post.poi_name }}</div>
+                    <div class="location-text">{{ post.poiName }}</div>
                 </div>
 
                 <div class="function">
                     <div class="like-comment">
                         <div class="likes" @click="like()">
                             <div class="text">
-                                <van-icon name="good-job" v-if="post.user_actions.is_liked" />
+                                <van-icon name="good-job" v-if="post.userActions.isLiked" />
                                 <van-icon name="good-job-o" v-else />
-                                <span class="likes-text" v-if="post.stats.like_cnt">{{ post.stats.like_cnt }}</span>
+                                <span class="likes-text" v-if="post.stats.likeCnt">{{ post.stats.likeCnt }}</span>
                             </div>
                         </div>
 
                         <div class="comment">
                             <div class="text">
                                 <van-icon name="chat-o" />
-                                <span class="comment-text" v-if="post.stats.comment_cnt">{{ post.stats.comment_cnt
-                                }}</span>
+                                <span class="comment-text" v-if="post.stats.commentCnt">{{ post.stats.commentCnt
+                                    }}</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="collection-share">
                         <div class="collection" @click="collect()">
-                            <van-icon name="bookmark-o" v-if="!post.user_actions.is_favorited" />
+                            <van-icon name="bookmark-o" v-if="!post.userActions.isFavorited" />
                             <van-icon name="bookmark" v-else />
                         </div>
 
                         <div class="share" @click="share()">
                             <van-icon name="share-o" />
-                            <span class="share-text" v-if="post.stats.share_cnt">{{ post.stats.share_cnt }}</span>
+                            <span class="share-text" v-if="post.stats.shareCnt">{{ post.stats.shareCnt }}</span>
                         </div>
                     </div>
                 </div>
@@ -520,26 +517,26 @@ const deleteUserComment = async (commentId) => {
 
         <div class="comments">
             <div class="comment-header">
-                <span class="comment-title">评论{{ post.stats.comment_cnt }}条</span>
+                <span class="comment-title">评论{{ post.stats.commentCnt }}条</span>
             </div>
 
             <div class="inp">
                 <div class="avatar-scroll-container" :class="{ 'show-at': atFlag }">
                     <div class="avatar-scroll-wrapper">
                         <div v-for="item in friendsList" :key="item.id" class="avatar-item"
-                            @click="atOrNotAt(item.friend_id)">
-                            <div class="select-style" :class="{ 'show-select': atUsersFlag.get(item.friend_id) }">
+                            @click="atOrNotAt(item.friendId)">
+                            <div class="select-style" :class="{ 'show-select': atUsersFlag.get(item.friendId) }">
                                 <van-icon name="success" color="#fb288e" class="select-icon" />
                             </div>
-                            <van-image :src="item.friend.avatar_url || defaultAvatar" round />
-                            <div class="avatar-name">{{ item.friend.nickname }}</div>
+                            <van-image :src="item.friend.avatarUrl || defaultAvatar" round />
+                            <div class="avatar-name">{{ item.friend.nickName }}</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="publish">
                     <div class="avatar">
-                        <van-image :src="userStore.userInfo.avatar_url || defaultAvatar" class="avatar-image" />
+                        <van-image :src="userStore.userInfo.avatarUrl || defaultAvatar" class="avatar-image" />
                     </div>
                     <div class="publish-input">
                         <textarea v-model="commentContent" placeholder="善于结善缘，恶言伤人心" v-keyboard
@@ -560,23 +557,23 @@ const deleteUserComment = async (commentId) => {
                 <div class="comment-list" v-if="commentList">
                     <div v-for="comment in commentList" :key="comment.id" class="comment-item">
                         <div class="comment-user">
-                            <van-image :src="comment.user.avatar_url || defaultAvatar" class="comment-avatar" />
-                            <span class="comment-nickname">{{ comment.user.nickname }}</span>
+                            <van-image :src="comment.user.avatarUrl || defaultAvatar" class="comment-avatar" />
+                            <span class="comment-nickname">{{ comment.user.nickName }}</span>
                         </div>
 
                         <div class="comment-content">
                             {{ comment.content }}
-                            <div v-if="comment.at_users">
+                            <div v-if="comment.atUsers">
                                 @
-                                <span v-for="user in comment.at_users" :key="user.id" class="comment-at-user">
-                                    {{ user.nickname }}&nbsp;
+                                <span v-for="user in comment.atUsers" :key="user.id" class="comment-at-user">
+                                    {{ user.nickName }}&nbsp;
                                 </span>
                             </div>
                         </div>
 
                         <div class="comment-info">
                             <div class="comment-time">
-                                {{ timeAgo(comment.created_at) }}
+                                {{ timeAgo(comment.createdAt) }}
                             </div>
 
                             <div class="actions">
@@ -587,11 +584,11 @@ const deleteUserComment = async (commentId) => {
                                     <van-icon name="delete-o" @click="deleteUserComment(comment.id)" />
                                 </div>
 
-                                <div class="comment-like" @click="likeComments(comment.id, comment.is_liked)">
-                                    <van-icon name="good-job" v-if="comment.is_liked" />
+                                <div class="comment-like" @click="likeComments(comment.id, comment.isLiked)">
+                                    <van-icon name="good-job" v-if="comment.isLiked" />
                                     <van-icon name="good-job-o" v-else />
-                                    <span class="text" v-if="comment.like_cnt">
-                                        {{ comment.like_cnt }}
+                                    <span class="text" v-if="comment.likeCnt">
+                                        {{ comment.likeCnt }}
                                     </span>
                                 </div>
                             </div>
@@ -600,23 +597,23 @@ const deleteUserComment = async (commentId) => {
                         <div class="second-comment" v-if="comment.replies">
                             <div class="second-comment-line" v-for="reply in comment.replies">
                                 <div class="comment-user">
-                                    <van-image :src="reply.user.avatar_url || defaultAvatar" class="comment-avatar" />
-                                    <span class="comment-nickname">{{ reply.user.nickname
-                                    }}</span>
+                                    <van-image :src="reply.user.avatarUrl || defaultAvatar" class="comment-avatar" />
+                                    <span class="comment-nickname">{{ reply.user.nickName
+                                        }}</span>
                                 </div>
 
                                 <div class="comment-content">
                                     {{ reply.content }} @
-                                    <div v-if="reply.at_users">
-                                        <span v-for="user in reply.at_users" :key="user.id" class="comment-at-user">
-                                            {{ user.nickname }}&nbsp;
+                                    <div v-if="reply.atUsers">
+                                        <span v-for="user in reply.atUsers" :key="user.id" class="comment-at-user">
+                                            {{ user.nickName }}&nbsp;
                                         </span>
                                     </div>
                                 </div>
 
                                 <div class="second-comment-info">
                                     <div class="comment-time">
-                                        {{ timeAgo(reply.created_at) }}
+                                        {{ timeAgo(reply.createdAt) }}
                                     </div>
 
                                     <div class="actions">
@@ -626,11 +623,11 @@ const deleteUserComment = async (commentId) => {
                                         </div>
 
                                         <div class="comment-like"
-                                            @click="likeComments(comment.id, reply.id, reply.is_liked)">
-                                            <van-icon name="good-job" v-if="reply.is_liked" />
+                                            @click="likeComments(comment.id, reply.id, reply.isLiked)">
+                                            <van-icon name="good-job" v-if="reply.isLiked" />
                                             <van-icon name="good-job-o" v-else />
-                                            <span class="text" v-if="reply.like_cnt">
-                                                {{ reply.like_cnt }}
+                                            <span class="text" v-if="reply.likeCnt">
+                                                {{ reply.likeCnt }}
                                             </span>
                                         </div>
                                     </div>
@@ -697,6 +694,10 @@ const deleteUserComment = async (commentId) => {
 
 .container {
     margin-top: 10px;
+
+    .content {
+        font-size: 16px;
+    }
 }
 
 .topic-scroll-container {

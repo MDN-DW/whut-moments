@@ -72,7 +72,8 @@ const router = createRouter({
     },
     {
       // 任务评价页
-      path: '/task/rate'
+      path: '/rate',
+      component: () => import('@/views/task/TaskRate.vue')
     },
     {
       // 发朋友圈写内容页 编辑朋友圈页
@@ -84,20 +85,8 @@ const router = createRouter({
       path: '/myposts/list'
     },
     {
-      // 主页访问页
-      path: '/go/user'
-    },
-    {
       // 加好友申请信息页
       path: '/friends/apply'
-    },
-    {
-      // 好友聊天页
-      path: '/friends/chat'
-    },
-    {
-      // 好友列表页
-      path: '/partner/list'
     },
     {
       // 我的帖子页
@@ -120,14 +109,25 @@ const router = createRouter({
       component: () => import('@/views/task/PublishTask.vue')
     },
     {
-      // 任务详情 后面合并
+      // 任务详情
       path: '/task/detail/:id',
+      component: () => import('@/views/task/TaskDetail.vue')
     },
     {
       // 朋友圈详情页
       path: '/posts/detail/:id',
       component: () => import('@/views/post/PostDetail.vue')
     },
+    {
+      // 用户主页
+      path: '/user/:id',
+      component: () => import('@/views/user/UserInfo.vue')
+    },
+    {
+      // 聊天页
+      path: '/chat',
+      component: () => import('@/views/message/ChatIndex.vue')
+    }
   ],
 })
 

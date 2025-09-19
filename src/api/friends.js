@@ -20,3 +20,14 @@ export const readNotice = (notification_id) => {
 export const getNoticeCount = () => {
     return request.get('/api/notifications/unread_count')
 }
+
+// 获取聊天记录
+export const getChatRecord = ({ page, size, friendId }) => {
+    return request.get('/api/friends/messages', {
+        params: {
+            page,
+            size,
+            friendId
+        }
+    })
+}

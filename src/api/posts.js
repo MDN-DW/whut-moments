@@ -1,13 +1,11 @@
 import request from "@/utils/request";
 
 // 获取所有动态列表
-export const getAllPost = ({ page, size, topic_id, user_id }) => {
-    return request.get('/api/posts/all', {
+export const getAllPost = ({ page, size }) => {
+    return request.get('/api/posts', {
         params: {
             page,
-            size,
-            topic_id,
-            user_id
+            size
         }
     })
 }
@@ -58,11 +56,11 @@ export const cancelLikeComment = (comment_id) => {
 }
 
 // 发布评论
-export const publishComment = (post_id, { content, parent_id, at_users }) => {
+export const publishComment = (post_id, { content, parentId, atUsers }) => {
     return request.post(`/api/comments/${post_id}`, {
         content,
-        parent_id,
-        at_users
+        parentId,
+        atUsers
     })
 }
 
@@ -91,4 +89,24 @@ export const deleteComment = (comment_id) => {
 // 获取动态详情
 export const getPostDetail = (post_id) => {
     return request.get(`/api/posts/${post_id}`)
+}
+
+// 获取话题下的动态列表
+export const getTopicPostList = (topic_id, page, size) => {
+    return request.get(`api/topics/${topic_id}/posts`, {
+        params: {
+            page,
+            size
+        }
+    })
+}
+
+// 获取他人动态列表
+export const getUserPostList = (user_id, page, size) => {
+    return request.get(`api/users/${user_id}/`, {
+        params: {
+            page,
+            size
+        }
+    })
 }

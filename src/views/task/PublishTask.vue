@@ -14,9 +14,9 @@ const form = ref({
     content: '',
     reward: '',
     visibility: 'PUBLIC',
-    expire_at: null,
-    file_ids: [],
-    tag_ids: []
+    expireAt: null,
+    fileIds: [],
+    tagIds: []
 })
 
 // 回显
@@ -28,9 +28,9 @@ onMounted(async () => {
             content: data.content,
             reward: data.reward,
             visibility: data.visibility,
-            expire_at: data.expire_at,
-            file_ids: data.file_ids,
-            tag_ids: data.tag_ids
+            expireAt: data.expireAt,
+            fileIds: data.fileIds,
+            tagIds: data.tagIds
         }
     }
 })
@@ -93,23 +93,23 @@ const onConfirmPrivacy = ({ selectedOptions }) => {
     showPrivacy.value = false
 }
 
-// 正式
-/* const taskTags = ref([])
+const taskTags = ref([])
+
 onMounted(async () => {
     const { data: { data } } = await getAllTaskTag()
     taskTags.value = data.list.filter(item => item.name !== '全部')
-}) */
+})
 
 const selectTag = (id) => {
-    if (form.value.tag_ids.includes(id)) {
-        form.value.tag_ids.splice(form.value.tag_ids.indexOf(id), 1)
+    if (form.value.tagIds.includes(id)) {
+        form.value.tagIds.splice(form.value.tagIds.indexOf(id), 1)
     } else {
-        form.value.tag_ids.push(id)
+        form.value.tagIds.push(id)
     }
 }
 
 // 测试
-const taskTags = ref([
+/* const taskTags = ref([
     {
         "id": 2,
         "name": "校园生活",
@@ -152,24 +152,24 @@ const taskTags = ref([
         "weight": 100,
         "is_hot": 1
     },
-])
+]) */
 
 const viewUrls = ref([])
 const afterRead = (files) => {
     // 处理单个文件或多个文件
     const fileList = Array.isArray(files) ? files : [files]
 
-    // 提取原始文件对象并添加到 form.file_ids 中
+    // 提取原始文件对象并添加到 form.fileIds 中
     fileList.forEach(file => {
         if (file.file) {
-            form.value.file_ids.push(file.file) // 只保存原始File对象
+            form.value.fileIds.push(file.file) // 只保存原始File对象
         }
     })
 }
 
 watch([() => dateResult.value, () => timeResult.value], () => {
     const dateTimeString = `${dateResult.value}T${timeResult.value}`
-    form.value.expire_at = new Date(dateTimeString) // 这就是 ISO 8601 格式的 Date 对象
+    form.value.expireAt = new Date(dateTimeString) // 这就是 ISO 8601 格式的 Date 对象
 })
 </script>
 <template>
@@ -179,7 +179,8 @@ watch([() => dateResult.value, () => timeResult.value], () => {
             <van-field class="title" name="title" v-model="form.title" label="任务标题"
                 :rules="[{ required: true, message: '请填写标题' }]" />
 
-            <van-field v-model="form.content" autosize label="任务内容" type="textarea" />
+            <van-field v-model="form.content" rows="5" label="任务内容" type="textarea" maxlength="300"
+                placeholder="请输入任务内容" show-word-limit />
 
             <van-field name="uploader" label="文件上传">
                 <template #input>
@@ -197,7 +198,7 @@ watch([() => dateResult.value, () => timeResult.value], () => {
                 <div class="tag-scroll-container">
                     <div class="tag-scroll-wrapper">
                         <div v-for="item in taskTags" :key="item.id" class="tag-item" @click="selectTag(item.id)"
-                            :class="{ 'tag-item-active': form.tag_ids.includes(item.id) }">
+                            :class="{ 'tag-item-active': form.tagIds.includes(item.id) }">
                             <div class="tag-name">{{ item.name }}</div>
                         </div>
                     </div>
@@ -240,30 +241,6 @@ watch([() => dateResult.value, () => timeResult.value], () => {
     .form {
         height: 100%;
         margin-top: 45px;
-    }
-
-    :deep(.van-field__control) {
-        max-height: 100px;
-        overflow-y: auto;
-
-        // 自定义滚动条样式（可选）
-        &::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        &::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background: #dcdada;
-            border-radius: 10px;
-        }
-
-        &::-webkit-scrollbar-thumb:hover {
-            background: #dcdada;
-        }
     }
 
     .title,

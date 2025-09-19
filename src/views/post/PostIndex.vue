@@ -1,7 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import { getAllPost, getCommentList, likePost, cancelLikePost, collectPost, cancelCollectPost, sharePost, likeComment, cancelLikeComment, publishComment, deleteComment } from "@/api/posts"
-import { getFriendsList } from "@/api/friends"
+import { getAllPost, likePost, cancelLikePost, collectPost, cancelCollectPost, sharePost } from "@/api/posts"
 import { ref, onMounted } from "vue"
 import defaultAvatar from "@/assets/image/default.png"
 import { timeAgo } from "@/utils/timeFormat"
@@ -15,31 +14,30 @@ const postList = ref([])
 const postPage = ref(1)
 const postSize = ref(10)
 
-// 正式
-/* onMounted(async () => {
+onMounted(async () => {
     const { data: { data } } = await getAllPost({ page: postPage.value, size: postSize.value })
     postList.value = data.list
-}) */
+})
 
 // 测试
-postList.value = [
+/* postList.value = [
     {
         "id": 2001,
         "user": {
             "id": 1001,
-            "nickname": "用户昵称",
-            "avatar_url": ""
+            "nickName": "用户昵称",
+            "avatarUrl": ""
         },
         "content": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "visibility": "PUBLIC",
-        "poi_name": "天安门广场",
-        "is_top": 0,
+        "poiName": "天安门广场",
+        "isTop": 0,
         "status": "PUBLISHED",
         "files": [
             {
                 "id": 1001,
-                "file_url": "",
-                "thumb_url": "",
+                "fileUrl": "",
+                "thumbUrl": "",
                 "size": 1024000
             }
         ],
@@ -72,19 +70,19 @@ postList.value = [
             }
         ],
         "stats": {
-            "view_cnt": 100,
-            "like_cnt": 10,
-            "comment_cnt": 5,
-            "share_cnt": 2
+            "viewCnt": 100,
+            "likeCnt": 10,
+            "commentCnt": 5,
+            "shareCnt": 2
         },
-        "user_actions": {
-            "is_liked": false,
-            "is_favorited": false
+        "userActions": {
+            "isLiked": false,
+            "isFavorited": false
         },
-        "created_at": "2023-01-01T00:00:00Z",
-        "updated_at": "2023-01-01T00:00:00Z"
+        "createdAt": "2023-01-01T00:00:00Z",
+        "updatedAt": "2023-01-01T00:00:00Z"
     }
-]
+] */
 
 const postLoading = ref(false)
 const postFinished = ref(false)
@@ -119,17 +117,6 @@ const onPostRefresh = () => {
     onPostLoad()
 }
 
-const expandedPosts = ref(new Set()) // 跟踪哪些帖子已展开
-
-// 切换帖子内容展开状态
-const toggleContent = (postId) => {
-    if (expandedPosts.value.has(postId)) {
-        expandedPosts.value.delete(postId)
-    } else {
-        expandedPosts.value.add(postId)
-    }
-}
-
 // 根据id在postList中找到对应的post
 const findPostById = (postId) => {
     return postList.value.find(post => post.id === postId)
@@ -137,39 +124,38 @@ const findPostById = (postId) => {
 
 const like = async (postId) => {
     const post = findPostById(postId)
-    if (post.user_actions.is_liked) {
+    if (post.userActions.isLiked) {
         const { data: data } = await cancelLikePost(postId)
-        post.user_actions.is_liked = false
-        post.stats.like_cnt = data.like_cnt
+        post.userActions.isLiked = false
+        post.stats.likeCnt = data.likeCnt
     } else {
         const { data: data } = await likePost(postId)
-        post.user_actions.is_liked = true
-        post.stats.like_cnt = data.like_cnt
+        post.userActions.isLiked = true
+        post.stats.likeCnt = data.likeCnt
     }
 }
 
 const collect = async (postId) => {
     const post = findPostById(postId)
-    if (postuser_actions.is_favorited) {
+    if (post.userActions.isFavorited) {
         await cancelCollectPost(postId)
-        post.user_actions.is_favorited = false
+        post.userActions.isFavorited = false
     } else {
         await collectPost(postId)
-        post.user_actions.is_favorited = true
+        post.userActions.isFavorited = true
     }
 }
 
 const share = async (postId) => {
     const post = findPostById(postId)
     const { data: data } = await sharePost(postId)
-    post.stats.share_cnt = data.share_cnt
+    post.stats.shareCnt = data.shareCnt
 }
-
 </script>
 
 <template>
-    <van-nav-bar title="校遇" />
-    <van-search v-model="key" placeholder="请输入搜索关键词" @focus="router.push('/search')" class="post-search">
+    <van-nav-bar title="校遇" fixed />
+    <van-search placeholder="请输入搜索关键词" @focus="router.push('/search')" class="post-search">
     </van-search>
 
     <van-cell class="post-share">
@@ -181,24 +167,25 @@ const share = async (postId) => {
 
     <van-pull-refresh v-model="postRefreshing" @refresh="onPostRefresh">
         <van-list v-model:loading="postLoading" :finished="postFinished" finished-text="没有更多了" @load="onPostLoad">
-            <van-cell v-for="item in postList" :key="item.id" class="post-info"
-                @click="router.push(`/posts/detail/${item.id}`)">
+            <van-cell v-for="item in postList" :key="item.id" class="post-info">
                 <div class="header">
-                    <van-image :src="item.user.avatar_url || defaultAvatar" class="avatar-image" />
+                    <van-image :src="item.user.avatarUrl || defaultAvatar" class="avatar-image"
+                        @click="router.push(`/user/${item.user.id}`)" />
                     <div class="nickname-time">
-                        <div class="nickname">{{ item.user.nickname }}</div>
-                        <div class="time">
-                            <span class="time-text">{{ timeAgo(item.created_at) }}</span>
+                        <div class="nickname" @click="router.push(`/user/${item.user.id}`)">{{ item.user.nickName }}
+                        </div>
+                        <div class="time" @click="router.push(`/posts/detail/${item.id}`)">
+                            <span class="time-text">{{ timeAgo(item.createdAt) }}</span>
                         </div>
                     </div>
 
-                    <div class="view-cnt" v-if="item.stats.view_cnt">
+                    <div class="view-cnt" v-if="item.stats.viewCnt" @click="router.push(`/posts/detail/${item.id}`)">
                         <van-icon name="eye-o" class="view-icon" />
-                        <span class="view-cnt-text">{{ item.stats.view_cnt }}</span>
+                        <span class="view-cnt-text">{{ item.stats.viewCnt }}</span>
                     </div>
                 </div>
 
-                <div class="content-container">
+                <div class="content-container" @click="router.push(`/posts/detail/${item.id}`)">
                     <div class="content" v-if="item.content.length <= 50">
                         {{ item.content }}
                     </div>
@@ -223,24 +210,24 @@ const share = async (postId) => {
                         <div class="file-scroll-container">
                             <div class="file-scroll-wrapper">
                                 <div v-for="value in item.files" :key="value.id" class="file-item">
-                                    <van-image class="file-image" :src="value.file_url" />
+                                    <van-image class="file-image" :src="value.fileUrl" />
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="location" v-if="item.poi_name">
+                    <div class="location" v-if="item.poiName">
                         <van-icon name="location-o" />
-                        <div class="location-text">{{ item.poi_name }}</div>
+                        <div class="location-text">{{ item.poiName }}</div>
                     </div>
 
                     <div class="function">
                         <div class="like-comment">
                             <div class="likes" @click="like(item.id)">
                                 <div class="text">
-                                    <van-icon name="good-job" v-if="item.user_actions.is_liked" />
+                                    <van-icon name="good-job" v-if="item.userActions.isLiked" />
                                     <van-icon name="good-job-o" v-else />
-                                    <span class="likes-text" v-if="item.stats.like_cnt">{{ item.stats.like_cnt
+                                    <span class="likes-text" v-if="item.stats.likeCnt">{{ item.stats.likeCnt
                                         }}</span>
                                 </div>
                             </div>
@@ -248,8 +235,8 @@ const share = async (postId) => {
                             <div class="comment">
                                 <div class="text">
                                     <van-icon name="chat-o" />
-                                    <span class="comment-text" v-if="item.stats.comment_cnt">{{
-                                        item.stats.comment_cnt
+                                    <span class="comment-text" v-if="item.stats.commentCnt">{{
+                                        item.stats.commentCnt
                                         }}</span>
                                 </div>
                             </div>
@@ -257,13 +244,13 @@ const share = async (postId) => {
 
                         <div class="collection-share">
                             <div class="collection" @click="collect(item.id)">
-                                <van-icon name="bookmark-o" v-if="!item.user_actions.is_favorited" />
+                                <van-icon name="bookmark-o" v-if="!item.userActions.isFavorited" />
                                 <van-icon name="bookmark" v-else />
                             </div>
 
                             <div class="share" @click="share(item.id)">
                                 <van-icon name="share-o" />
-                                <span class="share-text" v-if="item.stats.share_cnt">{{ item.stats.share_cnt
+                                <span class="share-text" v-if="item.stats.shareCnt">{{ item.stats.shareCnt
                                     }}</span>
                             </div>
                         </div>
@@ -276,6 +263,7 @@ const share = async (postId) => {
 
 <style lang="less" scoped>
 .post-search {
+    margin-top: 50px;
     margin-bottom: 10px;
 }
 

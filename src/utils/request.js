@@ -15,7 +15,7 @@ request.interceptors.request.use(function (config) {
     // 携带token
     const userStore = useUserStore()
     if (userStore.token) {
-        config.headers.Authorization = `Bearer ${userStore.token}`
+        config.headers.token = userStore.token
     }
     // 开启加载
     showLoadingToast({

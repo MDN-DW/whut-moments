@@ -4,22 +4,20 @@ import { ref, onMounted } from "vue"
 import defaultAvatar from "@/assets/image/default.png"
 import router from "@/router"
 
-// 正式
-/* const taskTags = ref([])
+const taskTags = ref([])
 const selectedTagId = ref(null)
 const page = ref(1)
 const size = ref(10)
 const taskList = ref([])
 
-const getTasks = async (staus, keyword) => {
-    const { data: { data } } = await getTaskList({ page: page.value, size: size.value, tag_id: selectedTagId.value, status: staus, keyword: keyword })
+const getTasks = async (status, keyword) => {
+    const { data: { data } } = await getTaskList({ page: page.value, size: size.value, tag_id: selectedTagId.value, status: status, keyword: keyword })
     taskList.value = data.list
 }
 
 onMounted(async () => {
     const { data: { data } } = await getAllTaskTag()
     taskTags.value = data.list
-    selectedTagId.value = taskTags.value[0].id
     await getTasks('', '')
 })
 
@@ -28,22 +26,15 @@ const selectTag = async (id) => {
     selectedTagId.value = id
     await getTasks('', '')
 }
- */
 
-const take = async (task_id) => {
-    await takeTask(task_id)
+
+const take = async (taskId) => {
+    await takeTask(taskId)
     await getTasks('', '')
 }
 
 // 测试
-const taskTags = ref([
-    {
-        "id": 1,
-        "name": "全部",
-        "category": "POST",
-        "weight": 100,
-        "is_hot": 1
-    },
+/* const taskTags = ref([
     {
         "id": 2,
         "name": "校园生活",
@@ -87,26 +78,26 @@ const taskTags = ref([
         "is_hot": 1
     },
 ])
-const selectedTagId = ref(taskTags.value[0].id)
+const selectedTagId = ref(null)
 const taskList = ref([
     {
         "id": 4001,
         "publisher": {
             "id": 1001,
-            "nickname": "发布者昵称",
-            "avatar_url": ""
+            "nickName": "发布者昵称",
+            "avatarUrl": ""
         },
         "title": "帮我取快递",
         "content": "在东门快递站取一个大包裹，送到西区宿舍楼",
         "reward": 10.50,
         "status": "RECRUIT",
         "visibility": "PUBLIC",
-        "expire_at": "2023-12-31T23:59:59Z",
-        "created_at": "2023-01-01T00:00:00Z",
+        "expireAt": "2023-12-31T23:59:59Z",
+        "createdAt": "2023-01-01T00:00:00Z",
         "files": [
             {
                 "id": 1001,
-                "thumb_url": "https://cdn.example.com/task/1001_thumb.jpg"
+                "thumbUrl": "https://cdn.example.com/task/1001_thumb.jpg"
             }
         ],
         "tags": [
@@ -116,31 +107,31 @@ const taskList = ref([
             }
         ],
         "stats": {
-            "view_cnt": 200,
-            "order_cnt": 3
+            "viewCnt": 200,
+            "orderCnt": 3
         },
-        "user_actions": {
-            "is_favorited": false
+        "userActions": {
+            "isFavorited": false
         }
     },
     {
         "id": 4001,
         "publisher": {
             "id": 1001,
-            "nickname": "发布者昵称",
-            "avatar_url": ""
+            "nickName": "发布者昵称",
+            "avatarUrl": ""
         },
         "title": "帮我取快递",
         "content": "在东门快递站取一个大包裹，送到西区宿舍楼",
         "reward": 10.50,
         "status": "RECRUIT",
         "visibility": "PUBLIC",
-        "expire_at": "2023-12-31T23:59:59Z",
-        "created_at": "2023-01-01T00:00:00Z",
+        "expireAt": "2023-12-31T23:59:59Z",
+        "createdAt": "2023-01-01T00:00:00Z",
         "files": [
             {
                 "id": 1001,
-                "thumb_url": "https://cdn.example.com/task/1001_thumb.jpg"
+                "thumbUrl": "https://cdn.example.com/task/1001_thumb.jpg"
             }
         ],
         "tags": [
@@ -150,31 +141,31 @@ const taskList = ref([
             }
         ],
         "stats": {
-            "view_cnt": 200,
-            "order_cnt": 3
+            "viewCnt": 200,
+            "orderCnt": 3
         },
-        "user_actions": {
-            "is_favorited": false
+        "userActions": {
+            "isFavorited": false
         }
     },
     {
         "id": 4001,
         "publisher": {
             "id": 1001,
-            "nickname": "发布者昵称",
-            "avatar_url": ""
+            "nickName": "发布者昵称",
+            "avatarUrl": ""
         },
         "title": "帮我取快递",
         "content": "在东门快递站取一个大包裹，送到西区宿舍楼",
         "reward": 10.50,
         "status": "FINISH",
         "visibility": "PUBLIC",
-        "expire_at": "2023-12-31T23:59:59Z",
-        "created_at": "2023-01-01T00:00:00Z",
+        "expireAt": "2023-12-31T23:59:59Z",
+        "createdAt": "2023-01-01T00:00:00Z",
         "files": [
             {
                 "id": 1001,
-                "thumb_url": "https://cdn.example.com/task/1001_thumb.jpg"
+                "thumbUrl": "https://cdn.example.com/task/1001_thumb.jpg"
             }
         ],
         "tags": [
@@ -184,65 +175,31 @@ const taskList = ref([
             }
         ],
         "stats": {
-            "view_cnt": 200,
-            "order_cnt": 3
+            "viewCnt": 200,
+            "orderCnt": 3
         },
-        "user_actions": {
-            "is_favorited": false
+        "userActions": {
+            "isFavorited": false
         }
     },
     {
         "id": 4001,
         "publisher": {
             "id": 1001,
-            "nickname": "发布者昵称",
-            "avatar_url": ""
+            "nickName": "发布者昵称",
+            "avatarUrl": ""
         },
         "title": "帮我取快递",
         "content": "在东门快递站取一个大包裹，送到西区宿舍楼",
         "reward": 10.50,
         "status": "RECRUIT",
         "visibility": "PUBLIC",
-        "expire_at": "2023-12-31T23:59:59Z",
-        "created_at": "2023-01-01T00:00:00Z",
+        "expireAt": "2023-12-31T23:59:59Z",
+        "createdAt": "2023-01-01T00:00:00Z",
         "files": [
             {
                 "id": 1001,
-                "thumb_url": "https://cdn.example.com/task/1001_thumb.jpg"
-            }
-        ],
-        "tags": [
-            {
-                "id": 5,
-                "name": "跑腿"
-            }
-        ],
-        "stats": {
-            "view_cnt": 200,
-            "order_cnt": 3
-        },
-        "user_actions": {
-            "is_favorited": true
-        }
-    },
-    {
-        "id": 4001,
-        "publisher": {
-            "id": 1001,
-            "nickname": "发布者昵称",
-            "avatar_url": ""
-        },
-        "title": "帮我取快递",
-        "content": "在东门快递站取一个大包裹，送到西区宿舍楼",
-        "reward": 10.50,
-        "status": "RECRUIT",
-        "visibility": "PUBLIC",
-        "expire_at": "2023-12-31T23:59:59Z",
-        "created_at": "2023-01-01T00:00:00Z",
-        "files": [
-            {
-                "id": 1001,
-                "thumb_url": "https://cdn.example.com/task/1001_thumb.jpg"
+                "thumbUrl": "https://cdn.example.com/task/1001_thumb.jpg"
             }
         ],
         "tags": [
@@ -256,20 +213,58 @@ const taskList = ref([
             }
         ],
         "stats": {
-            "view_cnt": 200,
-            "order_cnt": 3
+            "viewCnt": 200,
+            "orderCnt": 3
         },
-        "user_actions": {
-            "is_favorited": false
+        "userActions": {
+            "isFavorited": true
+        }
+    },
+    {
+        "id": 4001,
+        "publisher": {
+            "id": 1001,
+            "nickName": "发布者昵称",
+            "avatarUrl": ""
+        },
+        "title": "帮我取快递",
+        "content": "在东门快递站取一个大包裹，送到西区宿舍楼",
+        "reward": 10.50,
+        "status": "RECRUIT",
+        "visibility": "PUBLIC",
+        "expireAt": "2023-12-31T23:59:59Z",
+        "createdAt": "2023-01-01T00:00:00Z",
+        "files": [
+            {
+                "id": 1001,
+                "thumbUrl": "https://cdn.example.com/task/1001_thumb.jpg"
+            }
+        ],
+        "tags": [
+            {
+                "id": 5,
+                "name": "跑腿"
+            },
+            {
+                "id": 5,
+                "name": "跑腿"
+            }
+        ],
+        "stats": {
+            "viewCnt": 200,
+            "orderCnt": 3
+        },
+        "userActions": {
+            "isFavorited": false
         }
     }
-])
+]) */
 
-const collectOrCancle = async (task_id, is_favorited) => {
-    if (is_favorited) {
-        await cancelCollectTask(task_id)
+const collectOrCancle = async (taskId, isFavorited) => {
+    if (isFavorited) {
+        await cancelCollectTask(taskId)
     } else {
-        await collectTask(task_id)
+        await collectTask(taskId)
     }
     await getTasks('', '')
 }
@@ -288,6 +283,10 @@ const collectOrCancle = async (task_id, is_favorited) => {
 
     <div class="tag-scroll-container">
         <div class="tag-scroll-wrapper">
+            <div class="tag-item tag-item-all" :class="{ 'tag-item-active': selectedTagId === null }"
+                @click="selectTag(null)">
+                <div class="tag-name">全部</div>
+            </div>
             <div v-for="item in taskTags" :key="item.id" class="tag-item"
                 :class="{ 'tag-item-active': selectedTagId === item.id }" @click="selectTag(item.id)">
                 <div class="tag-name">{{ item.name }}</div>
@@ -330,10 +329,10 @@ const collectOrCancle = async (task_id, is_favorited) => {
                     {{ item.title }}
                 </div>
                 <div class="avatar-info">
-                    <van-image v-if="item.publisher.avatar_url" :src="item.publisher.avatar_url" class="avatar-image" />
+                    <van-image v-if="item.publisher.avatarUrl" :src="item.publisher.avatarUrl" class="avatar-image" />
                     <van-image v-else :src="defaultAvatar" class="avatar-image" />
                     <div class="nickname">
-                        {{ item.publisher.nickname || '匿名用户' }}
+                        {{ item.publisher.nickName || '匿名用户' }}
                     </div>
                 </div>
                 <div class="footer">
@@ -343,7 +342,7 @@ const collectOrCancle = async (task_id, is_favorited) => {
                     </div>
                     <div class="views">
                         <van-icon name="eye-o" />
-                        {{ item.stats.view_cnt }}
+                        {{ item.stats.viewCnt }}
                     </div>
                 </div>
                 <div class="btn">
@@ -356,8 +355,8 @@ const collectOrCancle = async (task_id, is_favorited) => {
                             已被人抢占
                         </van-button>
                         <van-button type="primary" class="collection-btn" color="#f3f4f6"
-                            @click="collectOrCancle(item.id, item.user_actions.is_favorited)">
-                            <van-icon name="star-o" color="black" v-if="!item.user_actions.is_favorited" />
+                            @click="collectOrCancle(item.id, item.userActions.isFavorited)">
+                            <van-icon name="star-o" color="black" v-if="!item.userActions.isFavorited" />
                             <van-icon name="star" color="#f4dd0d" v-else />
                         </van-button>
                     </div>

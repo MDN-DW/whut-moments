@@ -29,14 +29,13 @@ const onLoad = async () => {
         refreshing.value = false
     }
 
-    // 正式
-    /* const { data: { data } } = await getHotTopics()
+    const { data: { data } } = await getHotTopics()
     hotTopicList.value = data.list
     const { data: { data: d } } = await getHotPosts()
-    hotPostList.value = d.list */
+    hotPostList.value = d.list
 
     // 测试
-    hotTopicList.value = [
+    /* hotTopicList.value = [
         {
             "id": 1,
             "name": "#校园新鲜事#",
@@ -54,7 +53,8 @@ const onLoad = async () => {
     hotPostList.value = [
         { "title": "校园兼职", "search_cnt": 1200, "id": 1 },
         { "title": "期末资料", "search_cnt": 800, "id": 2 }
-    ]
+    ] */
+
     loading.value = false
     finished.value = true
 }
@@ -118,7 +118,13 @@ const onSearch = () => {
                     <div class="hot-topics">
                         <strong><van-icon name="fire" color="#ee0a24" />话题讨论TOP10</strong>
                         <van-cell v-for="(item, index) in hotTopicList" :key="item.id" :value="item.post_cnt"
-                            class="hot-topic-item">
+                            class="hot-topic-item" @click="router.push({
+                                path: '/search/result',
+                                query: {
+                                    topicId: item.id,
+                                    topicName: item.name
+                                }
+                            })">
                             <template #title>
                                 <div class="content">
                                     <div class="rank">
@@ -135,6 +141,31 @@ const onSearch = () => {
                         </van-cell>
                     </div>
 
+                    <div class="all-topics">
+                        <strong><van-icon name="column" color="#60a5fa" />全部话题</strong>
+                        <van-cell v-for="(item, index) in hotTopicList" :key="item.id" :value="item.post_cnt"
+                            class="hot-topic-item" @click="router.push({
+                                path: '/search/result',
+                                query: {
+                                    topicId: item.id,
+                                    topicName: item.name
+                                }
+                            })">
+                            <template #title>
+                                <div class="content">
+                                    <div class="rank">
+                                        {{ index + 1 }}
+                                    </div>
+                                    <div class="title">
+                                        {{ item.name }}
+                                    </div>
+                                </div>
+                            </template>
+                            <template #value>
+                                {{ `${item.post_cnt}人讨论` }}
+                            </template>
+                        </van-cell>
+                    </div>
                 </van-list>
             </div>
         </van-pull-refresh>
@@ -221,6 +252,10 @@ const onSearch = () => {
     margin-bottom: 10px;
     padding: 5px;
     border-radius: 10px;
+
+    :deep(.van-search__content) {
+        background-color: white;
+    }
 
     :deep(.van-field__body) {
         border-radius: 20px;

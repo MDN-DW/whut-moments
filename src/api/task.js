@@ -76,3 +76,21 @@ export const editTask = (task_id, { title, content, reward, visibility, expire_a
 export const getTaskDetail = (task_id) => {
     return request.get(`/api/tasks/${task_id}`)
 }
+
+// 提交任务评价
+export const submitTaskComment = (taskId, orderId, revieweeId, roleType, score, tags, content) => {
+    return request.post('/api/task_orders/reviews', {
+        taskId,
+        orderId,
+        revieweeId,
+        roleType,
+        score,
+        tags,
+        content
+    })
+}
+
+// 接取任务
+export const acceptTask = (task_id) => {
+    return request.post(`/api/task_orders/${task_id}`)
+}

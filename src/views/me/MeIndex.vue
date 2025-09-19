@@ -13,14 +13,15 @@ const formModel = ref({})
 const userStore = useUserStore()
 
 onMounted(async () => {
-    /* const { data: { data } } = await getUserInfo()
-    formModel.value = data */
+    const { data: { data } } = await getUserInfo()
+    formModel.value = data
 
-    formModel.value = { "id": 1001, "nickname": "WHUT", "avatar_url": "", "birthday": "1990-01-01", "gender": 1, "campus_id": 1, "campus_name": "北京大学", "qq_openid": "xxx", "mobile": "13800138000", "real_name": "张三", "id_card_no": "110101199001011234", "is_real_name": 0, "privacy_mobile": 1, "privacy_birthday": 0, "privacy_fans": 1, "status": 0, "created_at": "2023-01-01T00:00:00Z", "updated_at": "2023-01-01T00:00:00Z" }
-    userStore.setUserInfo({ id: formModel.value.id, nickname: formModel.value.nickname, avatar: formModel.value.avatar_url })
+    // formModel.value = { "id": 1001, "nickName": "WHUT", "avatarUrl": "", "birthday": "1990-01-01", "gender": 1, "campusId": 1, "campusName": "北京大学", "qqOpenid": "xxx", "mobile": "13800138000", "realName": "张三", "idCardNo": "110101199001011234", "isRealName": 0, "privacyMobile": 1, "privacyBirthday": 0, "privacyFans": 1, "status": 0, "createdAt": "2023-01-01T00:00:00Z", "updatedAt": "2023-01-01T00:00:00Z" }
+
+    userStore.setUserInfo({ id: formModel.value.id, nickName: formModel.value.nickName, avatar: formModel.value.avatarUrl })
 })
 
-const avatarUrl = formModel.value.avatar_url
+const avatarUrl = formModel.value.avatarUrl
 
 const Logout = async () => {
     await logout()
@@ -31,18 +32,18 @@ const Logout = async () => {
 </script>
 
 <template>
-    <div class="me"><!-- v-if="userStore.token" -->
+    <div class="me" v-if="userStore.token">
         <div class="header">
-            <van-nav-bar title="我的" />
+            <van-nav-bar title="我的" fixed />
         </div>
         <div class="container">
             <div class="avatar-baseinfo">
                 <van-image :src="avatarUrl || defaultAvatar" round fit="cover" />
-                <div class="nickname">
-                    {{ formModel.nickname || '匿名用户' }}
+                <div class="nickName">
+                    {{ formModel.nickName || '匿名用户' }}
                 </div>
                 <div class="campus">
-                    {{ formModel.campus_name || '未填写' }}
+                    {{ formModel.campusName || '未填写' }}
                 </div>
                 <div class="edit">
                     <van-button color="#84b0ed" to="/me/content">编辑资料</van-button>
@@ -53,7 +54,7 @@ const Logout = async () => {
                     <div class="verify-label">
                         <van-icon name="manager" color="#51afef" />
                         <span class="tip">实名认证</span>
-                        <van-tag type="primary" v-if="formModel.is_real_name">已实名</van-tag>
+                        <van-tag type="primary" v-if="formModel.isRealName">已实名</van-tag>
                         <van-tag type="danger" v-else>未实名</van-tag>
                     </div>
                     <van-icon name="arrow" />
@@ -79,9 +80,16 @@ const Logout = async () => {
                     </div>
                     <van-icon name="arrow" />
                 </div>
+                <div class="my-task">
+                    <div class="task-label" @click="router.push('/mytasks')">
+                        <van-icon name="notes" color="#d6a206" />
+                        <span class="tip">我的任务</span>
+                    </div>
+                    <van-icon name="arrow" />
+                </div>
                 <div class="black" @click="router.push('/black')">
                     <div class="black-label">
-                        <van-icon name="delete" color="#ff0000" />
+                        <van-icon name="delete" />
                         <span class="tip">黑名单</span>
                     </div>
                     <van-icon name="arrow" />
@@ -90,20 +98,20 @@ const Logout = async () => {
             <van-button type="danger" plain replace class="logout-button" @click="Logout">退出登录</van-button>
         </div>
     </div>
-    <!-- <div v-else class="un-login">
+    <div v-else class="un-login">
         <strong>请先登录</strong>
         <p>登录后即可使用全部功能</p>
         <van-button type="primary" @click="router.push('/login')" class="go-login-button">
             <van-icon name="guide-o" />
             去登录
         </van-button>
-    </div> -->
+    </div>
 </template>
 
 <style lang="less" scoped>
 .me {
-    position: relative;
     height: 100vh;
+    overflow-y: auto;
 
     :deep(.van-image) {
         width: 50px;
@@ -114,8 +122,12 @@ const Logout = async () => {
         display: flex;
         flex-direction: column;
         align-items: center;
+        margin-top: 50px;
+        padding-bottom: 100px;
+        /* 为退出按钮留出空间 */
 
         .avatar-baseinfo {
+            padding-top: 20px;
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -147,6 +159,7 @@ const Logout = async () => {
             .my-posts,
             .likes,
             .my-collection,
+            .my-task,
             .black {
                 .tip {
                     margin-left: 5px;
@@ -172,10 +185,7 @@ const Logout = async () => {
         }
 
         .logout-button {
-            position: absolute;
-            top: 82%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            margin-top: 50px;
         }
     }
 }

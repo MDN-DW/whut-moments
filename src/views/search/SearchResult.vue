@@ -1,52 +1,88 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { getSearchList } from '@/api/search'
+import { getSearchKeyList } from '@/api/search'
+import { getTopicPostList } from '@/api/posts'
 import defaultAvatar from "@/assets/image/default.png"
 import { timeAgo } from '@/utils/timeFormat'
 
 const router = useRouter()
 const route = useRoute()
 
+const keyword = ref(route.query.key || route.query.topicName)
+
 const resultList = ref([])
 const page = ref(1)
 const size = ref(10)
 
-// 正式
-/* onMounted(async () => {
-    const { data: { data } } = await getSearchList(route.query.key, page.value, size.value)
-    resultList.value = data.list
-}) */
+onMounted(async () => {
+    let response
+    if (route.query.key) {
+        response = await getSearchKeyList(route.query.key, page.value, size.value)
+    } else {
+        response = await getTopicPostList(route.query.topicId, page.value, size.value)
+    }
+    resultList.value = response.data.data.list
+})
 
 // 测试
-onMounted(() => {
-    resultList.value = [
-        {
-            "id": 2001,
-            "user": {
-                "id": 1002, "nickname": "匿名用户", "avatar_url": ""
+/* onMounted(() => {
+    if (route.query.key) {
+        resultList.value = [
+            {
+                "id": 2001,
+                "user": {
+                    "id": 1002, "nickName": "匿名用户", "avatarUrl": ""
+                },
+                "content": "关键词 寻找志同道合的朋友...",
+                "createdAt": "2023-01-01T00:00:00Z"
             },
-            "content": "寻找志同道合的朋友...",
-            "created_at": "2023-01-01T00:00:00Z"
-        },
-        {
-            "id": 2001,
-            "user": {
-                "id": 1002, "nickname": "匿名用户", "avatar_url": ""
+            {
+                "id": 2001,
+                "user": {
+                    "id": 1002, "nickName": "匿名用户", "avatarUrl": ""
+                },
+                "content": "寻找志同道合的朋友...",
+                "createdAt": "2023-01-01T00:00:00Z"
             },
-            "content": "寻找志同道合的朋友...",
-            "created_at": "2023-01-01T00:00:00Z"
-        },
-        {
-            "id": 2001,
-            "user": {
-                "id": 1002, "nickname": "匿名用户", "avatar_url": ""
+            {
+                "id": 2001,
+                "user": {
+                    "id": 1002, "nickName": "匿名用户", "avatarUrl": ""
+                },
+                "content": "寻找志同道合的朋友...",
+                "createdAt": "2023-01-01T00:00:00Z"
+            }
+        ]
+    } else {
+        resultList.value = [
+            {
+                "id": 2001,
+                "user": {
+                    "id": 1002, "nickName": "匿名用户", "avatarUrl": ""
+                },
+                "content": "话题 寻找志同道合的朋友...",
+                "createdAt": "2023-01-01T00:00:00Z"
             },
-            "content": "寻找志同道合的朋友...",
-            "created_at": "2023-01-01T00:00:00Z"
-        }
-    ]
-})
+            {
+                "id": 2001,
+                "user": {
+                    "id": 1002, "nickName": "匿名用户", "avatarUrl": ""
+                },
+                "content": "寻找志同道合的朋友...",
+                "createdAt": "2023-01-01T00:00:00Z"
+            },
+            {
+                "id": 2001,
+                "user": {
+                    "id": 1002, "nickName": "匿名用户", "avatarUrl": ""
+                },
+                "content": "寻找志同道合的朋友...",
+                "createdAt": "2023-01-01T00:00:00Z"
+            }
+        ]
+    }
+}) */
 
 const loading = ref(false);
 const finished = ref(false);
@@ -56,51 +92,86 @@ const onLoad = async () => {
     if (refreshing.value) {
         resultList.value = []
         refreshing.value = false
+        page.value = 1
     }
 
-    // 正式
-    /* const { data: { data } } = await getSearchList(route.query.key, page.value, size.value)
-      
-    if (page.value === 1) {
-         resultList.value = data.list
-     } else {
-         resultList.value.push(...data.list)
-     } */
+    let response
 
-    // 测试
-    resultList.value = [
-        {
-            "id": 2001,
-            "user": {
-                "id": 1002, "nickname": "匿名用户", "avatar_url": ""
-            },
-            "content": "寻找志同道合的朋友...",
-            "created_at": "2023-01-01T00:00:00Z"
-        },
-        {
-            "id": 2001,
-            "user": {
-                "id": 1002, "nickname": "匿名用户", "avatar_url": ""
-            },
-            "content": "寻找志同道合的朋友...",
-            "created_at": "2023-01-01T00:00:00Z"
-        },
-        {
-            "id": 2001,
-            "user": {
-                "id": 1002, "nickname": "匿名用户", "avatar_url": ""
-            },
-            "content": "寻找志同道合的朋友...",
-            "created_at": "2023-01-01T00:00:00Z"
-        }
-    ]
+    if (route.query.key) {
+        response = await getSearchKeyList(route.query.key, page.value, size.value)
+    } else {
+        response = await getTopicPostList(route.query.topicId, page.value, size.value)
+    }
+
+    if (page.value === 1) {
+        resultList.value = response.data.data.list
+    } else {
+        resultList.value.push(...response.data.data.list)
+    }
 
     ++page.value
     loading.value = false
 
-    if (resultList.value.length >= data.pagination.total) {
+    if (resultList.value.length >= response.data.data.pagination.total) {
         finished.value = true;
     }
+
+    // 测试
+    /* if (route.query.key) {
+        resultList.value = [
+            {
+                "id": 2001,
+                "user": {
+                    "id": 1002, "nickName": "匿名用户", "avatarUrl": ""
+                },
+                "content": "关键词 寻找志同道合的朋友...",
+                "createdAt": "2023-01-01T00:00:00Z"
+            },
+            {
+                "id": 2001,
+                "user": {
+                    "id": 1002, "nickName": "匿名用户", "avatarUrl": ""
+                },
+                "content": "寻找志同道合的朋友...",
+                "createdAt": "2023-01-01T00:00:00Z"
+            },
+            {
+                "id": 2001,
+                "user": {
+                    "id": 1002, "nickName": "匿名用户", "avatarUrl": ""
+                },
+                "content": "寻找志同道合的朋友...",
+                "createdAt": "2023-01-01T00:00:00Z"
+            }
+        ]
+    } else {
+        resultList.value = [
+            {
+                "id": 2001,
+                "user": {
+                    "id": 1002, "nickName": "匿名用户", "avatarUrl": ""
+                },
+                "content": "话题 寻找志同道合的朋友...",
+                "createdAt": "2023-01-01T00:00:00Z"
+            },
+            {
+                "id": 2001,
+                "user": {
+                    "id": 1002, "nickName": "匿名用户", "avatarUrl": ""
+                },
+                "content": "寻找志同道合的朋友...",
+                "createdAt": "2023-01-01T00:00:00Z"
+            },
+            {
+                "id": 2001,
+                "user": {
+                    "id": 1002, "nickName": "匿名用户", "avatarUrl": ""
+                },
+                "content": "寻找志同道合的朋友...",
+                "createdAt": "2023-01-01T00:00:00Z"
+            }
+        ]
+    } */
 }
 
 const onRefresh = () => {
@@ -118,7 +189,7 @@ const onRefresh = () => {
     <div class="container">
         <van-nav-bar title="帖子搜索" />
 
-        <van-search v-model="route.query.key" placeholder="请输入搜索关键词" show-action @cancel="router.back()">
+        <van-search v-model="keyword" placeholder="请输入搜索关键词" show-action @cancel="router.back()">
         </van-search>
 
         <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
@@ -127,14 +198,14 @@ const onRefresh = () => {
                     @click="router.push(`/posts/detail/${item.id}`)">
                     <div class="item-info">
                         <div class="avatar">
-                            <van-image :src="item.user.avatar_url || defaultAvatar" class="avatar-image"></van-image>
+                            <van-image :src="item.user.avatarUrl || defaultAvatar" class="avatar-image"></van-image>
                         </div>
                         <div class="nickname-time">
                             <div class="nickname">
-                                {{ item.user.nickname }}
+                                {{ item.user.nickName }}
                             </div>
                             <div class="time">
-                                {{ timeAgo(item.created_at) }}
+                                {{ timeAgo(item.createdAt) }}
                             </div>
                         </div>
                     </div>

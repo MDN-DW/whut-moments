@@ -6,180 +6,179 @@ import { getFriendsList, readNotice, getNoticeCount } from '@/api/friends'
 import { useNoticeStore, useSocketStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
-// 正式
-// const { displayList, chatMap } = storeToRefs(useSocketStore())
+const { displayList, chatMap } = storeToRefs(useSocketStore())
 
 const isOpen = ref(false)
 
 const router = useRouter()
 
 // 正式
-/* const friendsList = ref([])
+const friendsList = ref([])
 const getList = async () => {
     const { data: { data } } = await getFriendsList({ page: 0, size: 0, status: 'ACCEPTED' })
     friendsList.value = data.list
 }
 getList()
-*/
+
 
 const loading = ref(false)
 const finished = ref(false)
 
 // 测试
-const friendsList = ref([
+/* const friendsList = ref([
     {
         "id": 1,
-        "friend_id": 1002,
+        "friendId": 1002,
         "friend": {
             "id": 1002,
-            "nickname": "好友昵称",
-            "avatar_url": "",
-            "campus_name": "北京大学"
+            "nickName": "好友昵称",
+            "avatarUrl": "",
+            "campusName": "北京大学"
         },
         "status": "ACCEPTED",
-        "created_at": "2023-01-01T00:00:00Z"
+        "createdAt": "2023-01-01T00:00:00Z"
     },
     {
         "id": 2,
-        "friend_id": 1002,
+        "friendId": 1002,
         "friend": {
             "id": 1002,
-            "nickname": "好友昵称",
-            "avatar_url": "",
-            "campus_name": "北京大学"
+            "nickName": "好友昵称",
+            "avatarUrl": "",
+            "campusName": "北京大学"
         },
         "status": "ACCEPTED",
-        "created_at": "2023-01-01T00:00:00Z"
+        "createdAt": "2023-01-01T00:00:00Z"
     },
     {
         "id": 3,
-        "friend_id": 1002,
+        "friendId": 1002,
         "friend": {
             "id": 1002,
-            "nickname": "好友昵称",
-            "avatar_url": "",
-            "campus_name": "北京大学"
+            "nickName": "好友昵称",
+            "avatarUrl": "",
+            "campusName": "北京大学"
         },
         "status": "ACCEPTED",
-        "created_at": "2023-01-01T00:00:00Z"
+        "createdAt": "2023-01-01T00:00:00Z"
     },
     {
         "id": 4,
-        "friend_id": 1002,
+        "friendId": 1002,
         "friend": {
             "id": 1002,
-            "nickname": "好友昵称",
-            "avatar_url": "",
-            "campus_name": "北京大学"
+            "nickName": "好友昵称",
+            "avatarUrl": "",
+            "campusName": "北京大学"
         },
         "status": "ACCEPTED",
-        "created_at": "2023-01-01T00:00:00Z"
+        "createdAt": "2023-01-01T00:00:00Z"
     },
     {
         "id": 5,
-        "friend_id": 1002,
+        "friendId": 1002,
         "friend": {
             "id": 1002,
-            "nickname": "好友昵称",
-            "avatar_url": "",
-            "campus_name": "北京大学"
+            "nickName": "好友昵称",
+            "avatarUrl": "",
+            "campusName": "北京大学"
         },
         "status": "ACCEPTED",
-        "created_at": "2023-01-01T00:00:00Z"
+        "createdAt": "2023-01-01T00:00:00Z"
     },
     {
         "id": 6,
-        "friend_id": 1002,
+        "friendId": 1002,
         "friend": {
             "id": 1002,
-            "nickname": "好友昵称",
-            "avatar_url": "",
-            "campus_name": "北京大学"
+            "nickName": "好友昵称",
+            "avatarUrl": "",
+            "campusName": "北京大学"
         },
         "status": "ACCEPTED",
-        "created_at": "2023-01-01T00:00:00Z"
+        "createdAt": "2023-01-01T00:00:00Z"
     }
 ])
 
 const displayList = ref([
     {
-        "user_id": 1001,
-        "nickname": "好友昵称",
-        "avatar_url": "",
+        "userId": 1001,
+        "nickName": "好友昵称",
+        "avatarUrl": "",
         "text": "你好",
         "status": "UNREAD",
         "count": 1,
         "type": "CHAT",
-        "notification_id": 1
+        "notificationId": 1
     },
     {
-        "user_id": 1002,
-        "nickname": "好友昵称",
-        "avatar_url": "",
+        "userId": 1002,
+        "nickName": "好友昵称",
+        "avatarUrl": "",
         "text": "你好",
         "status": "UNREAD",
         "count": 1,
         "type": "CHAT",
-        "notification_id": 1
+        "notificationId": 1
     }, {
-        "user_id": 1003,
-        "nickname": "好友昵称",
-        "avatar_url": "",
+        "userId": 1003,
+        "nickName": "好友昵称",
+        "avatarUrl": "",
         "text": "你好",
         "status": "UNREAD",
         "count": 1,
         "type": "CHAT",
-        "notification_id": 1
+        "notificationId": 1
     }, {
-        "user_id": 1004,
-        "nickname": "好友昵称",
-        "avatar_url": "",
+        "userId": 1004,
+        "nickName": "好友昵称",
+        "avatarUrl": "",
         "text": "你好",
         "status": "UNREAD",
         "count": 1,
         "type": "CHAT",
-        "notification_id": 1
+        "notificationId": 1
     }, {
-        "user_id": 1005,
-        "nickname": "好友昵称",
-        "avatar_url": "",
+        "userId": 1005,
+        "nickName": "好友昵称",
+        "avatarUrl": "",
         "text": "你好",
         "status": "UNREAD",
         "count": 1,
         "type": "CHAT",
-        "notification_id": 1
+        "notificationId": 1
     }, {
-        "user_id": 1006,
-        "nickname": "好友昵称",
-        "avatar_url": "",
+        "userId": 1006,
+        "nickName": "好友昵称",
+        "avatarUrl": "",
         "text": "你好",
         "status": "UNREAD",
         "count": 1,
         "type": "CHAT",
-        "notification_id": 1
+        "notificationId": 1
     }
-])
+]) */
 
-const dleChat = (friend_id) => {
+const dleChat = (friendId) => {
     // 有computered 自动更新
-    chatMap.value.delete(friend_id)
+    chatMap.value.delete(friendId)
 }
 
 const findValueByNotificationId = (targetNotificationId) => {
     for (const value of chatMap.value.values()) {
-        if (value.notification_id === targetNotificationId) {
+        if (value.notificationId === targetNotificationId) {
             return value
         }
     }
     return null
 }
-const read = async (list, notification_id) => {
-    await readNotice(notification_id)
-    const value = findValueByNotificationId(notification_id)
+const read = async (notificationId) => {
+    await readNotice(notificationId)
+    const value = findValueByNotificationId(notificationId)
     if (value) {
         value.status = 'READ'
     }
-    chatMap.value.set(value.user_id, value)
+    chatMap.value.set(value.userId, value)
 }
 </script>
 
@@ -199,22 +198,30 @@ const read = async (list, notification_id) => {
     <div class="has-friends" v-if="friendsList.length">
         <div class="avatar-scroll-container">
             <div class="avatar-scroll-wrapper">
-                <div v-for="item in friendsList" :key="item.id" class="avatar-item">
-                    <van-image :src="item.friend.avatar_url || defaultAvatar" round />
-                    <div class="avatar-name">{{ item.friend.nickname }}</div>
+                <div v-for="item in friendsList" :key="item.id" class="avatar-item"
+                    @click="router.push(`/user/${item.friend.id}`)">
+                    <van-image :src="item.friend.avatarUrl || defaultAvatar" round />
+                    <div class="avatar-name">{{ item.friend.nickName }}</div>
                 </div>
             </div>
         </div>
 
         <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
             <van-cell-group border>
-                <van-swipe-cell v-for="item in displayList" :key="item.user_id">
-                    <van-cell v-if="item.type === 'CHAT'">
+                <van-swipe-cell v-for="item in displayList" :key="item.userId">
+                    <van-cell v-if="item.type === 'CHAT'" @click="router.push({
+                        path: '/chat',
+                        query: {
+                            userId: item.userId,
+                            nickName: item.nickName,
+                            avatarUrl: item.avatarUrl
+                        }
+                    })">
                         <template #title>
                             <div class="avatar-nickname">
-                                <van-image class="custom-image" :src="item.avatar_url || defaultAvatar" />
+                                <van-image class="custom-image" :src="item.avatarUrl || defaultAvatar" />
                                 <div class="text">
-                                    <p class="custom-title">{{ item.nickname || '匿名用户' }}</p>
+                                    <p class="custom-title">{{ item.nickName || '匿名用户' }}</p>
                                     <p class="custom-last-chat">{{ item.text }}</p>
                                 </div>
                             </div>
@@ -259,10 +266,10 @@ const read = async (list, notification_id) => {
                         </template>
                     </van-cell>
                     <template #right>
-                        <van-button square text="已读" color="#c4c0c0" class="read-button"
-                            @click="read(chatList, item.id)" v-if="item.status === 'UNREAD' && item.type === 'CHAT'" />
+                        <van-button square text="已读" color="#c4c0c0" class="read-button" @click="read(item.id)"
+                            v-if="item.status === 'UNREAD' && item.type === 'CHAT'" />
                         <van-button square text="删除" type="danger" class="delete-button"
-                            @click="dleChat(item.friend_id)" />
+                            @click="dleChat(item.friendId)" />
                     </template>
                 </van-swipe-cell>
             </van-cell-group>

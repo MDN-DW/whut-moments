@@ -17,16 +17,16 @@ const files = ref([])
 const form = ref({
     content: '',
     visibility: '',
-    poi_lat: null,
-    poi_lng: null,
-    poi_name: null,
-    file_ids: [],
-    topic_names: []
+    poiLat: null,
+    poiLng: null,
+    poiName: null,
+    fileIds: [],
+    topicNames: []
 })
 
 const showTopicList = ref(false)
 
-const topicList = ref([
+/* const topicList = ref([
     {
         id: 1,
         name: '校园动态'
@@ -47,13 +47,13 @@ const topicList = ref([
         id: 2,
         name: '生活分享'
     }
-])
+]) */
 
 const selectTopic = (topicName) => {
-    if (form.value.topic_names.includes(topicName)) {
-        form.value.topic_names.splice(form.value.topic_names.indexOf(topicName), 1)
+    if (form.value.topicNames.includes(topicName)) {
+        form.value.topicNames.splice(form.value.topicNames.indexOf(topicName), 1)
     } else {
-        form.value.topic_names.push(topicName)
+        form.value.topicNames.push(topicName)
     }
 }
 
@@ -84,8 +84,8 @@ const getLocation = () => {
                 const longitude = position.coords.longitude
 
                 // 将位置信息保存到表单中
-                form.value.poi_lat = latitude
-                form.value.poi_lng = longitude
+                form.value.poiLat = latitude
+                form.value.poiLng = longitude
 
                 // 可以调用逆地理编码获取具体地址名称
                 getAddressFromCoordinates(latitude, longitude)
@@ -130,7 +130,7 @@ const getAddressFromCoordinates = (lat, lng) => {
       .then(response => response.json())
       .then(data => {
         if (data.regeocode) {
-          form.value.poi_name = data.regeocode.formatted_address;
+          form.value.poiName = data.regeocode.formatted_address;
         }
       })
       .catch(error => {
@@ -144,33 +144,33 @@ const getAddressFromCoordinates = (lat, lng) => {
 }) */
 
 // 测试
-form.value.poi_name = '武汉理工大学'
+form.value.poiName = '武汉理工大学'
 
 const onSubmit = async () => {
     const formData = new FormData()
     formData.append('content', form.value.content)
     formData.append('visibility', form.value.visibility)
-    if (form.value.poi_lat) {
-        formData.append('poi_lat', form.value.poi_lat)
+    if (form.value.poiLat) {
+        formData.append('poiLat', form.value.poiLat)
     }
-    if (form.value.poi_lng) {
-        formData.append('poi_lng', form.value.poi_lng)
+    if (form.value.poiLng) {
+        formData.append('poiLng', form.value.poiLng)
     }
-    if (form.value.poi_name) {
-        formData.append('poi_name', form.value.poi_name)
+    if (form.value.poiName) {
+        formData.append('poiName', form.value.poiName)
     }
 
-    form.value.topic_names.forEach(topic => {
-        formData.append('topic_names', topic)
+    form.value.topicNames.forEach(topic => {
+        formData.append('topicNames', topic)
     })
 
     files.value.forEach(file => {
-        formData.append('file_ids', file.file)
+        formData.append('fileIds', file.file)
     })
 
     await publishPost(formData)
 
-    router.push('/posts')
+    router.push('/')
 }
 </script>
 
@@ -189,11 +189,12 @@ const onSubmit = async () => {
         <div class="avatar-nickname">
             <van-image :src="userStore.userInfo.avatar || defaultAvatar" class="avatar-image" />
             <div class="nickname-time">
-                <div class="nickname">{{ userStore.userInfo.nickname }}</div>
+                <div class="nickname">{{ userStore.userInfo.nickName }}</div>
             </div>
         </div>
 
-        <van-field v-model="form.content" placeholder="分享你的校园日常吧~" type="textarea" class="content-field" />
+        <van-field v-model="form.content" rows="5" type="textarea" maxlength="300" placeholder="分享你的校园日常吧~"
+            show-word-limit />
 
         <div class="photo">
             <p class="photo-title">
@@ -212,8 +213,8 @@ const onSubmit = async () => {
         <div class="function">
             <div class="topics" @click="showTopicList = !showTopicList">
                 <div class="list" :class="{ 'list-show': showTopicList }">
-                    <div v-for="item in topicList" :key="item.id" class="item" @click="selectTopic(item.name)"
-                        :class="{ 'selected': form.topic_names.includes(item.name) }">
+                    <div v-for="item in topicList" :key="item.id" class="item" @click.stop="selectTopic(item.name)"
+                        :class="{ 'selected': form.topicNames.includes(item.name) }">
                         {{ item.name }}
                     </div>
                 </div>
@@ -231,7 +232,8 @@ const onSubmit = async () => {
             <div class="privacy" @click="showPrivacyList = !showPrivacyList">
                 <div class="list" :class="{ 'list-show': showPrivacyList }">
                     <div v-for="item in privacyList" :key="item.value" class="item"
-                        @click="form.visibility = item.value" :class="{ 'selected': form.visibility === item.value }">
+                        @click.stop="form.visibility = item.value"
+                        :class="{ 'selected': form.visibility === item.value }">
                         {{ item.text }}
                     </div>
                 </div>
@@ -250,7 +252,7 @@ const onSubmit = async () => {
         <div class="position">
             <van-icon name="location-o" />
             <div class="text">
-                {{ form.poi_name }}
+                {{ form.poiName }}
             </div>
         </div>
 
@@ -306,45 +308,6 @@ const onSubmit = async () => {
 
             .nickname {
                 font-size: 16px;
-            }
-        }
-    }
-
-
-    .content-field {
-        margin-top: 10px;
-        background-color: #fafafc;
-
-        :deep(.van-field__placeholder) {
-            color: #a0a9b6;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        :deep(.van-field__control) {
-            height: 100px;
-            max-height: 200px;
-            overflow-y: auto;
-            border-bottom: 1px solid #e5e5e5;
-            color: #9cabc9;
-
-            // 自定义滚动条样式（可选）
-            &::-webkit-scrollbar {
-                width: 5px;
-            }
-
-            &::-webkit-scrollbar-track {
-                background: #f1f1f1;
-                border-radius: 10px;
-            }
-
-            &::-webkit-scrollbar-thumb {
-                background: #dcdada;
-                border-radius: 10px;
-            }
-
-            &::-webkit-scrollbar-thumb:hover {
-                background: #dcdada;
             }
         }
     }
@@ -433,10 +396,6 @@ const onSubmit = async () => {
             background-color: white;
             border-radius: 5px;
 
-            &:active {
-                background-color: #f3f4f6;
-            }
-
             .title {
                 display: flex;
                 flex-direction: column;
@@ -450,12 +409,11 @@ const onSubmit = async () => {
                 overflow-y: auto;
                 background-color: white;
                 border: 1px solid #e5e5e5;
-                opacity: 0;
-                transition: opacity .2s ease;
+                display: none;
                 bottom: calc(48vw / 3);
 
                 &.list-show {
-                    opacity: 1;
+                    display: block;
                 }
 
                 .item {
